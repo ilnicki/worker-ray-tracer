@@ -1,18 +1,21 @@
-import { Camera, iterate } from './camera';
+import { Body, BodyHandler, BodyHandlerRegistry, registry as bodyRegistry } from './body';
+import { iterate } from './camera';
 import * as c from './color';
 import { Intersection } from './intersection';
 import { Light } from './light';
 import { Ray } from './ray';
 import { Scene } from './scene';
-import { Thing } from './thing';
+import { registry as surfaceRegistry, SurfaceRegistry } from './surface';
 import { dot, mag, minus, norm, plus, times, Vector } from './vector';
 
 export class RayTracer {
     public scene: Scene;
-    private maxDepth = 5;
+    private maxDepth = 7;
+    private surfaces: SurfaceRegistry = surfaceRegistry;
+    private bodies: BodyHandlerRegistry = bodyRegistry;
 
     public render(ctx: CanvasRenderingContext2D): void {
-        for (const [x, y] of iterate(this.scene.camera)) {
+        for (const {x, y} of iterate(this.scene.camera)) {
             const color = this.tracePoint(x, y);
 
             ctx.fillStyle = c.toString(color);
@@ -42,8 +45,8 @@ export class RayTracer {
     }
 
     private intersections(ray: Ray): Intersection {
-        return this.scene.things.map(thing => thing.intersect(ray)).reduce((closest, inter) =>
-            (!closest || inter && inter.dist < closest.dist) ? inter : closest, null);
+        return this.scene.bodies.map(body => (this.bodies[body.handlerId] as BodyHandler).intersect(ray, body))
+            .reduce((closest, inter) => (!closest || inter && inter.dist < closest.dist) ? inter : closest, null);
     }
 
     private testRay(ray: Ray): number {
@@ -59,25 +62,26 @@ export class RayTracer {
     private shade(isect: Intersection, depth: number) {
         const d = isect.ray.dir;
         const pos = plus(times(isect.dist, d), isect.ray.start);
-        const normal = isect.thing.normal(pos);
+        const bodyHandler = this.bodies[isect.body.handlerId] as BodyHandler;
+        const normal = bodyHandler.normal(pos, isect.body);
         const reflectDir = minus(d,
             times(2, times(dot(normal, d), normal)));
         const naturalColor = c.plus(c.background,
-            this.getNaturalColor(isect.thing, pos, normal, reflectDir));
+            this.getNaturalColor(isect.body, pos, normal, reflectDir));
         const reflectedColor = (depth >= this.maxDepth)
             ? c.grey
-            : this.getReflectionColor(isect.thing, pos, normal, reflectDir, depth);
+            : this.getReflectionColor(isect.body, pos, reflectDir, depth);
         return c.plus(naturalColor, reflectedColor);
     }
 
-    private getReflectionColor(thing: Thing, pos: Vector, normal: Vector, rd: Vector, depth: number) {
+    private getReflectionColor(body: Body, pos: Vector, rd: Vector, depth: number) {
         return c.scale(
-            thing.surface.reflect(pos),
+            this.surfaces[body.surfaceId].reflect(pos),
             this.traceRay({ start: pos, dir: rd }, depth + 1)
         );
     }
 
-    private getNaturalColor(thing: Thing, pos: Vector, normal: Vector, rd: Vector) {
+    private getNaturalColor(body: Body, pos: Vector, normal: Vector, rd: Vector) {
         return this.scene.lights.reduce((col: c.Color, light: Light) => {
             const ldis = minus(light.pos, pos);
             const livec = norm(ldis);
@@ -91,13 +95,13 @@ export class RayTracer {
                     : c.defaultColor;
                 const specular = dot(livec, norm(rd));
                 const scolor = (specular > 0)
-                    ? c.scale(Math.pow(specular, thing.surface.roughness), light.color)
+                    ? c.scale(Math.pow(specular, this.surfaces[body.surfaceId].roughness), light.color)
                     : c.defaultColor;
                 return c.plus(
                     col,
                     c.plus(
-                        c.times(thing.surface.diffuse(pos), lcolor),
-                        c.times(thing.surface.specular(pos), scolor)
+                        c.times(this.surfaces[body.surfaceId].diffuse(pos), lcolor),
+                        c.times(this.surfaces[body.surfaceId].specular(pos), scolor)
                     )
                 );
             }

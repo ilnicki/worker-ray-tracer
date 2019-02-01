@@ -1,9 +1,9 @@
+import { Body } from './body';
 import { Camera } from './camera';
 import { Light } from './light';
-import { Thing } from './thing';
 
 export interface Scene {
-    things: Thing[];
+    bodies: Body[];
     lights: Light[];
     camera: Camera;
 }

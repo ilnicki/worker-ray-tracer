@@ -29,3 +29,17 @@ export const checkerboard: Surface = {
     reflect: pos => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? 0.1 : 0.7,
     roughness: 150,
 };
+
+export interface SurfaceRegistry {
+    shiny: Surface;
+    matt: Surface;
+    checkerboard: Surface;
+}
+
+export type SurfaceId = keyof SurfaceRegistry;
+
+export const registry: SurfaceRegistry = {
+    shiny,
+    matt,
+    checkerboard,
+};
