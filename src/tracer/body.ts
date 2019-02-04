@@ -1,7 +1,7 @@
 import { Intersection } from './intersection';
-import { Plane, PlaneHandler } from './plane';
+import { PlaneHandler } from './plane';
 import { Ray } from './ray';
-import { Sphere, SphereHandler } from './sphere';
+import { SphereHandler } from './sphere';
 import { SurfaceId } from './surface';
 import { Vector } from './vector';
 

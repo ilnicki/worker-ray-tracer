@@ -1,5 +1,4 @@
 import { Body, BodyHandler, BodyHandlerRegistry, registry as bodyRegistry } from './body';
-import { iterate } from './camera';
 import * as c from './color';
 import { Intersection } from './intersection';
 import { Light } from './light';
@@ -10,18 +9,9 @@ import { dot, mag, minus, norm, plus, times, Vector } from './vector';
 
 export class RayTracer {
     public scene: Scene;
-    private maxDepth = 7;
+    private maxDepth = 5;
     private surfaces: SurfaceRegistry = surfaceRegistry;
     private bodies: BodyHandlerRegistry = bodyRegistry;
-
-    public render(ctx: CanvasRenderingContext2D): void {
-        for (const {x, y} of iterate(this.scene.camera)) {
-            const color = this.tracePoint(x, y);
-
-            ctx.fillStyle = c.toString(color);
-            ctx.fillRect(x, y, 1, 1);
-        }
-    }
 
     public tracePoint(x: number, y: number): c.Color {
         return c.toDrawingColor(this.traceRay({

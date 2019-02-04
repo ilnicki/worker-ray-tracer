@@ -19,13 +19,11 @@ export const plus = (v1: Color, v2: Color): Color =>
 export const times = (v1: Color, v2: Color): Color =>
     ({ r: v1.r * v2.r, g: v1.g * v2.g, b: v1.b * v2.b });
 
-const legalize = (d: number): number => d > 1 ? 1 : d;
-
 export const toDrawingColor = (c: Color): Color => {
     return {
-        r: Math.floor(legalize(c.r) * 255),
-        g: Math.floor(legalize(c.g) * 255),
-        b: Math.floor(legalize(c.b) * 255),
+        r: Math.floor(Math.min(1, c.r) * 255),
+        g: Math.floor(Math.min(1, c.g) * 255),
+        b: Math.floor(Math.min(1, c.b) * 255),
     };
 };
 

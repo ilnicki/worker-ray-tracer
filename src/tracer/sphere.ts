@@ -1,4 +1,4 @@
-import { Body, BodyHandler, BodyHandlerId } from './body';
+import { Body, BodyHandler } from './body';
 import { Intersection } from './intersection';
 import { Ray } from './ray';
 import { SurfaceId } from './surface';

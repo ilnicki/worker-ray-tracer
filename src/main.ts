@@ -1,10 +1,8 @@
-import { iterate, makeCamera } from './tracer/camera';
-import * as c from './tracer/color';
+import { makeCamera } from './tracer/camera';
 import { makePlane } from './tracer/plane';
-import { RayTracer } from './tracer/ray-tracer';
 import { Scene } from './tracer/scene';
 import { makeSphere } from './tracer/sphere';
-import { PointTrace, Rect, WorkerController } from './worker/worker-controller';
+import { WorkerController } from './worker/worker-controller';
 
 function defaultScene(width: number, height: number): Scene {
     return {
@@ -24,33 +22,26 @@ function defaultScene(width: number, height: number): Scene {
     };
 }
 
-document.body.onload = () => {
+document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     if (canvas.getContext) {
         const ctx = canvas.getContext('2d');
         const scene = defaultScene(canvas.width, canvas.height);
 
-        const wcs: WorkerController[] = (new Array(1)).fill(undefined).map(() => new WorkerController());
-        wcs.forEach(wc => wc.setScene(scene));
+        const wcs: WorkerController[] = Array(4).fill(null).map(() => new WorkerController());
+        await Promise.all(wcs.map(wc => wc.setScene(scene)));
 
-        wcs.forEach((wc, id, { length }) => {
-            wc.traceRect({ x: 0, y: canvas.height / length * id, w: canvas.width, h: canvas.height / length })
-                .then(({ rect, result }) => {
-                    const bits = result.entries();
-
-                    for (let y = rect.y; y < rect.h; y++) {
-                        for (let x = rect.x; x < rect.w; x++) {
-                            ctx.fillStyle = c.toString({
-                                r: bits.next().value[1],
-                                g: bits.next().value[1],
-                                b: bits.next().value[1],
-                            });
-                            ctx.fillRect(x, y, 1, 1);
-                        }
-                    }
-                });
-        });
+        const traces = wcs.map((wc, id, { length }) =>
+            wc.traceRect({
+                x: 0,
+                y: Math.round(canvas.height / length * id),
+                w: canvas.width,
+                h: Math.round(canvas.height / length),
+            }).then(({ position: { x, y }, image }) => {
+                window.requestAnimationFrame(() => ctx.putImageData(image, x, y));
+            })
+        );
     } else {
-        alert('Error: Application can not be drawn.');
+        throw new Error('Application can not be drawn.');
     }
 };

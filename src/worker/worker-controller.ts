@@ -1,12 +1,9 @@
-import { Color } from '../tracer/color';
 import { Point } from '../tracer/point';
 import { Scene } from '../tracer/scene';
 
-export type PointTrace = [number, number, string];
-
 export interface RectTrace {
-    rect: Rect;
-    result: Int8Array;
+    position: Point;
+    image: ImageData;
 }
 
 export interface Rect {
@@ -23,14 +20,10 @@ export class WorkerController {
         this.worker = new Worker('worker.bundle.js');
     }
 
-    public setScene(scene: Scene) {
-        this.worker.postMessage({ scene });
-    }
-
-    public tracePoint(point: Point): Promise<PointTrace> {
+    public setScene(scene: Scene): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.worker.postMessage({ point });
-            this.worker.addEventListener('message', ({ data }) => resolve(data), { once: true });
+            this.worker.postMessage({ scene });
+            this.worker.addEventListener('message', () => resolve(), { once: true });
         });
     }
 

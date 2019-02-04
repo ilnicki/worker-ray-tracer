@@ -1,6 +1,6 @@
-import * as c from '../tracer/color';
+import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
-import { PointTrace, Rect } from './worker-controller';
+import { Rect, RectTrace } from './worker-controller';
 
 export interface WorkerContext {
     postMessage<T = any>(message: T, transfer?: Transferable[]): void;
@@ -18,28 +18,39 @@ export class WorkerExecutor {
         context.addEventListener('message', ({ data }) => {
             if (data.scene) {
                 this.tracer.scene = data.scene;
-            } else if (data.point) {
-                context.postMessage<PointTrace>([
-                    data.point[0],
-                    data.point[1],
-                    c.toString(this.tracer.tracePoint(data.point[0], data.point[1])),
-                ]);
-            } else if (data.rect) {
-                const rect: Rect = data.rect;
-                const result = new Uint8Array(rect.w * rect.h * 3);
+                context.postMessage(undefined);
+            } else if (this.isRectTrace(data)) {
+                const position: Point = {
+                    x: data.rect.x,
+                    y: data.rect.y,
+                };
+                const image = new ImageData(
+                    new Uint8ClampedArray(4 * data.rect.w * data.rect.h),
+                    data.rect.w,
+                    data.rect.h,
+                );
                 let pointer = 0;
 
-                for (let y = rect.y; y < rect.h; y++) {
-                    for (let x = rect.x; x < rect.w; x++) {
+                for (let y = position.y; y < position.y + image.height; y++) {
+                    for (let x = position.x; x < position.x + image.width; x++) {
                         const color = this.tracer.tracePoint(x, y);
 
-                        result[pointer++] = color.r;
-                        result[pointer++] = color.g;
-                        result[pointer++] = color.b;
+                        image.data[pointer++] = color.r;
+                        image.data[pointer++] = color.g;
+                        image.data[pointer++] = color.b;
+                        image.data[pointer++] = 255;
                     }
                 }
-                context.postMessage({rect, result}, [result.buffer]);
+
+                context.postMessage<RectTrace>({
+                    position,
+                    image,
+                }, [image.data.buffer]);
             }
         });
+    }
+
+    private isRectTrace(data: unknown): data is { rect: Rect } {
+        return typeof data === 'object' && data.hasOwnProperty('rect');
     }
 }
