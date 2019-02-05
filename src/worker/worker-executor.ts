@@ -1,3 +1,4 @@
+import { Scene } from 'tracer/scene';
 import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
 import { Rect, RectTrace } from './worker-controller';
@@ -16,7 +17,7 @@ export class WorkerExecutor {
 
     public attachTo(context: WorkerContext) {
         context.addEventListener('message', ({ data }) => {
-            if (data.scene) {
+            if (this.isSceneSetting(data)) {
                 this.tracer.scene = data.scene;
                 context.postMessage(undefined);
             } else if (this.isRectTrace(data)) {
@@ -52,5 +53,9 @@ export class WorkerExecutor {
 
     private isRectTrace(data: unknown): data is { rect: Rect } {
         return typeof data === 'object' && data.hasOwnProperty('rect');
+    }
+
+    private isSceneSetting(data: unknown): data is { scene: Scene } {
+        return typeof data === 'object' && data.hasOwnProperty('scene');
     }
 }
