@@ -68,7 +68,8 @@
         "object-literal-sort-keys": [
             false,
             "match-declaration-order"
-        ]
+        ],
+        "forin": false
     },
     "rulesDirectory": []
 }
