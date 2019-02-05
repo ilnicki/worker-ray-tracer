@@ -34,9 +34,9 @@ document.body.onload = async () => {
         const traces = wcs.map((wc, id, { length }) =>
             wc.traceRect({
                 x: 0,
-                y: Math.round(canvas.height / length * id),
+                y: Math.floor(canvas.height / length * id),
                 w: canvas.width,
-                h: Math.round(canvas.height / length),
+                h: Math.ceil(canvas.height / length),
             }).then(({ position: { x, y }, image }) => {
                 window.requestAnimationFrame(() => ctx.putImageData(image, x, y));
             })
