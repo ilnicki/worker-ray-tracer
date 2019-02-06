@@ -69,7 +69,8 @@
             false,
             "match-declaration-order"
         ],
-        "forin": false
+        "forin": false,
+        "no-bitwise": false,
     },
     "rulesDirectory": []
 }
