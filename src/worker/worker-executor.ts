@@ -1,3 +1,4 @@
+import { Camera } from 'tracer/camera';
 import { Scene } from 'tracer/scene';
 import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
@@ -19,7 +20,10 @@ export class WorkerExecutor {
         context.addEventListener('message', ({ data }) => {
             if (this.isSceneSetting(data)) {
                 this.tracer.scene = data.scene;
-                context.postMessage(undefined);
+                context.postMessage(null);
+            } else if (this.isCameraSetting(data)) {
+                this.tracer.scene.camera = data.camera;
+                context.postMessage(null);
             } else if (this.isRectTrace(data)) {
                 const position: Point = {
                     x: data.rect.x,
@@ -57,5 +61,9 @@ export class WorkerExecutor {
 
     private isSceneSetting(data: unknown): data is { scene: Scene } {
         return typeof data === 'object' && data.hasOwnProperty('scene');
+    }
+
+    private isCameraSetting(data: unknown): data is { camera: Camera } {
+        return typeof data === 'object' && data.hasOwnProperty('camera');
     }
 }

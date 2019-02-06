@@ -1,3 +1,4 @@
+import { Camera } from 'tracer/camera';
 import { Point } from '../tracer/point';
 import { Scene } from '../tracer/scene';
 
@@ -23,6 +24,13 @@ export class WorkerController {
     public setScene(scene: Scene): Promise<void> {
         return new Promise((resolve, reject) => {
             this.worker.postMessage({ scene });
+            this.worker.addEventListener('message', () => resolve(), { once: true });
+        });
+    }
+
+    public setCamera(camera: Camera): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.worker.postMessage({ camera });
             this.worker.addEventListener('message', () => resolve(), { once: true });
         });
     }
