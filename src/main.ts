@@ -3,6 +3,7 @@ import { makePlane } from './tracer/plane';
 import { Scene } from './tracer/scene';
 import { makeSphere } from './tracer/sphere';
 import { WorkerController } from './worker/worker-controller';
+import { fromHex } from './tracer/color';
 
 function defaultScene(width: number, height: number): Scene {
     return {
@@ -13,10 +14,10 @@ function defaultScene(width: number, height: number): Scene {
             makeSphere({ x: -4, y: 0.7, z: -1.5 }, 0.7, 'matt'),
         ],
         lights: [
-            { pos: { x: -2.0, y: 2.5, z: 0.0 }, color: { r: 0.49, g: 0.07, b: 0.07 } },
-            { pos: { x: 1.5, y: 2.5, z: 1.5 }, color: { r: 0.07, g: 0.07, b: 0.49 } },
-            { pos: { x: 1.5, y: 2.5, z: -1.5 }, color: { r: 0.07, g: 0.49, b: 0.071 } },
-            { pos: { x: 0.0, y: 3.5, z: 0.0 }, color: { r: 0.21, g: 0.21, b: 0.35 } },
+        { pos: { x: -2.0, y: 2.5, z: 0.0 }, color: fromHex('7d1212') },
+        { pos: { x: 1.5, y: 2.5, z: 1.5 }, color: fromHex('12127d') },
+        { pos: { x: 1.5, y: 2.5, z: -1.5 }, color: fromHex('127d12') },
+        { pos: { x: 0.0, y: 3.5, z: 0.0 }, color: fromHex('363659') },
         ],
         camera: makeCamera({ x: 4.0, y: 3.0, z: 5.0 }, { x: -1.0, y: 0.5, z: 0.0 }, width, height),
     };

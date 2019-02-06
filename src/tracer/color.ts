@@ -28,3 +28,11 @@ export const toDrawingColor = (c: Color): Color => {
 };
 
 export const toString = (c: Color): string => `rgb(${c.r}, ${c.g}, ${c.b}`;
+
+export const fromNumber = (num: number): Color => ({
+    r: ((num >> 16) & 255) / 255,
+    g: ((num >> 8) & 255) / 255,
+    b: (num & 255) / 255,
+});
+
+export const fromHex = (hex: string): Color => fromNumber(parseInt(hex, 16));
