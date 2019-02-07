@@ -1,2 +1,2 @@
 # worker-ray-tracer
-upgraded typescript playground ray tracer.
+Upgraded typescript playground ray tracer build.
