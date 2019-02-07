@@ -17,21 +17,21 @@ export class WorkerController {
     }
 
     public setScene(scene: Scene): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             this.worker.postMessage({ scene });
             this.worker.addEventListener('message', () => resolve(null), { once: true });
         });
     }
 
     public setCamera(camera: Camera): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             this.worker.postMessage({ camera });
             this.worker.addEventListener('message', () => resolve(null), { once: true });
         });
     }
 
     public traceRect(rect: Rect): Promise<Chunk> {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             this.worker.postMessage({ rect });
             this.worker.addEventListener('message', ({ data }) => resolve(data), { once: true });
         });

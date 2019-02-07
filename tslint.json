@@ -74,7 +74,14 @@
             "match-declaration-order"
         ],
         "forin": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "variable-name": {
+            "options": [
+                "ban-keywords", 
+                "check-format", 
+                "allow-leading-underscore"
+            ]
+        }
     },
     "rulesDirectory": []
 }

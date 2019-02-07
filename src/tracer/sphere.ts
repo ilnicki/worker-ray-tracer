@@ -19,7 +19,7 @@ export const makeSphere = (center: Vector, radius: number, surfaceId: SurfaceId)
     radius2: radius ** 2,
 });
 
-export const SphereHandler: BodyHandler<Sphere> = {
+export const sphereHandler: BodyHandler<Sphere> = {
     intersect(ray: Ray, sphere: Sphere): Intersection {
         const eo = minus(sphere.center, ray.start);
         const v = dot(eo, ray.dir);

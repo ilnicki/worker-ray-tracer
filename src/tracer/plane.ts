@@ -19,7 +19,7 @@ export const makePlane = (norm: Vector, offset: number, surfaceId: SurfaceId): P
     offset,
 });
 
-export const PlaneHandler: BodyHandler<Plane> = {
+export const planeHandler: BodyHandler<Plane> = {
     intersect(ray: Ray, plane: Plane): Intersection {
         const denom = dot(plane.norm, ray.dir);
 
@@ -31,5 +31,5 @@ export const PlaneHandler: BodyHandler<Plane> = {
         }
     },
 
-    normal: (pos: Vector, plane: Plane) => plane.norm,
+    normal: (_pos: Vector, plane: Plane) => plane.norm,
 };

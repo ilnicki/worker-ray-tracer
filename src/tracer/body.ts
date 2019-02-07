@@ -1,7 +1,7 @@
 import { Intersection } from './intersection';
-import { PlaneHandler } from './plane';
+import { planeHandler } from './plane';
 import { Ray } from './ray';
-import { SphereHandler } from './sphere';
+import { sphereHandler } from './sphere';
 import { SurfaceId } from './surface';
 import { Vector } from './vector';
 
@@ -23,6 +23,6 @@ export interface BodyHandlerRegistry {
 export type BodyHandlerId = keyof BodyHandlerRegistry;
 
 export const registry: BodyHandlerRegistry = {
-    plane: PlaneHandler,
-    sphere: SphereHandler,
+    plane: planeHandler,
+    sphere: sphereHandler,
 };
