@@ -1,9 +1,10 @@
+import { FrameQueue } from './animation/frame-queue';
 import { Camera, makeCamera } from './tracer/camera';
+import { fromHex } from './tracer/color';
 import { makePlane } from './tracer/plane';
 import { Scene } from './tracer/scene';
 import { makeSphere } from './tracer/sphere';
-import { WorkerController } from './worker/worker-controller';
-import { fromHex } from './tracer/color';
+import { WorkerManager } from './worker/worker-manager';
 
 const makeDefaultScene = (): Scene => ({
     bodies: [
@@ -33,27 +34,26 @@ document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     if (canvas.getContext) {
         const ctx = canvas.getContext('2d');
-        const wcs: WorkerController[] = Array(4).fill(null).map(() => new WorkerController());
+        const manager = new WorkerManager(4);
+        const queue = new FrameQueue();
+
+        const trydraw = () => window.requestAnimationFrame(() => {
+            queue.dequeue().forEach(({ position: { x, y }, image }) => {
+                ctx.putImageData(image, x, y);
+            });
+            trydraw();
+        });
+
+        setTimeout(trydraw, 3000);
 
         const scene = makeDefaultScene();
-        await Promise.all(wcs.map(wc => wc.setScene(scene)));
+        await manager.setScene(scene);
 
-        for (let x = 0; x < 360; x += 0.01) {
+        for (let x = 0; x < 10; x += 0.01) {
             const camera = makeDefaultCamera(canvas.width, canvas.height, x);
-            await Promise.all(wcs.map(wc => wc.setCamera(camera)));
+            await manager.setCamera(camera);
 
-            await Promise.all(wcs.map((wc, id, { length }) =>
-                wc.traceRect({
-                    x: 0,
-                    y: Math.floor(canvas.height / length * id),
-                    w: canvas.width,
-                    h: Math.ceil(canvas.height / length),
-                })
-            )).then(traces => window.requestAnimationFrame(() => {
-                traces.forEach(({ position: { x, y }, image }) => {
-                    ctx.putImageData(image, x, y);
-                })
-            }));
+            await manager.trace().then(frame => queue.enqueue(frame));
         }
 
     } else {

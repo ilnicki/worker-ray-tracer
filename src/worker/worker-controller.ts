@@ -1,11 +1,6 @@
-import { Camera } from 'tracer/camera';
-import { Point } from '../tracer/point';
+import { Chunk } from '../animation/chunk';
+import { Camera } from '../tracer/camera';
 import { Scene } from '../tracer/scene';
-
-export interface RectTrace {
-    position: Point;
-    image: ImageData;
-}
 
 export interface Rect {
     x: number;
@@ -24,18 +19,18 @@ export class WorkerController {
     public setScene(scene: Scene): Promise<void> {
         return new Promise((resolve, reject) => {
             this.worker.postMessage({ scene });
-            this.worker.addEventListener('message', () => resolve(), { once: true });
+            this.worker.addEventListener('message', () => resolve(null), { once: true });
         });
     }
 
     public setCamera(camera: Camera): Promise<void> {
         return new Promise((resolve, reject) => {
             this.worker.postMessage({ camera });
-            this.worker.addEventListener('message', () => resolve(), { once: true });
+            this.worker.addEventListener('message', () => resolve(null), { once: true });
         });
     }
 
-    public traceRect(rect: Rect): Promise<RectTrace> {
+    public traceRect(rect: Rect): Promise<Chunk> {
         return new Promise((resolve, reject) => {
             this.worker.postMessage({ rect });
             this.worker.addEventListener('message', ({ data }) => resolve(data), { once: true });

@@ -1,9 +1,10 @@
-import { Camera } from 'tracer/camera';
-import { Scene } from 'tracer/scene';
+import { Chunk } from '../animation/chunk';
+import { Camera } from '../tracer/camera';
 import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
-import { Rect, RectTrace } from './worker-controller';
+import { Scene } from '../tracer/scene';
 import { ImageDataFiller } from './image-data-filler';
+import { Rect } from './worker-controller';
 
 export interface WorkerContext {
     postMessage<T = any>(message: T, transfer?: Transferable[]): void;
@@ -43,7 +44,7 @@ export class WorkerExecutor {
                     }
                 }
 
-                context.postMessage<RectTrace>({
+                context.postMessage<Chunk>({
                     position,
                     image,
                 }, [image.data.buffer]);
