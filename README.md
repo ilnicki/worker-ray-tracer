@@ -1,2 +1,5 @@
 # worker-ray-tracer
-upgraded typescript playground ray tracer.
+
+Upgraded typescript playground ray tracer.
+
+Demo: <https://ilnicki.github.io/worker-ray-tracer/>
