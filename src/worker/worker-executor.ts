@@ -3,6 +3,7 @@ import { Scene } from 'tracer/scene';
 import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
 import { Rect, RectTrace } from './worker-controller';
+import { ImageDataFiller } from './image-data-filler';
 
 export interface WorkerContext {
     postMessage<T = any>(message: T, transfer?: Transferable[]): void;
@@ -34,16 +35,11 @@ export class WorkerExecutor {
                     data.rect.w,
                     data.rect.h,
                 );
-                let pointer = 0;
+                const filler = new ImageDataFiller(image);
 
                 for (let y = position.y; y < position.y + image.height; y++) {
                     for (let x = position.x; x < position.x + image.width; x++) {
-                        const color = this.tracer.tracePoint(x, y);
-
-                        image.data[pointer++] = color.r;
-                        image.data[pointer++] = color.g;
-                        image.data[pointer++] = color.b;
-                        image.data[pointer++] = 255;
+                        filler.append(this.tracer.tracePoint(x, y));
                     }
                 }
 
