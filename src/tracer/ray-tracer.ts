@@ -60,11 +60,12 @@ export class RayTracer {
     }
 
     private shade(isect: Intersection, depth: number) {
-        const d = isect.ray.dir;
-        const pos = plus(times(isect.dist, d), isect.ray.start);
+        const dir = isect.ray.dir;
         const bodyHandler = this.bodies[isect.body.handlerId] as BodyHandler;
+
+        const pos = plus(times(isect.dist, dir), isect.ray.start);
         const normal = bodyHandler.normal(pos, isect.body);
-        const reflectDir = minus(d, times(2, times(dot(normal, d), normal)));
+        const reflectDir = minus(dir, times(2, times(dot(normal, dir), normal)));
 
         const naturalColor = c.plus(
             c.background,
