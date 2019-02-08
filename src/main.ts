@@ -5,30 +5,31 @@ import { makePlane } from './tracer/plane';
 import { Scene } from './tracer/scene';
 import { makeSphere } from './tracer/sphere';
 import { WorkerManager } from './worker/worker-manager';
+import { make } from './tracer/vector';
 
 const makeDefaultScene = (): Scene => ({
     bodies: [
-        makePlane({ x: 0.0, y: 1.0, z: 0.0 }, 0.0, 'checkerboard'),
-        makeSphere({ x: 0.0, y: 1.0, z: -0.25 }, 1.0, 'shiny'),
-        makeSphere({ x: -1.0, y: 0.5, z: 1.5 }, 0.5, 'shiny'),
-        makeSphere({ x: -4, y: 0.7, z: -1.5 }, 0.7, 'matt'),
+        makePlane(make(0.0, 1.0, 0.0), 0.0, 'checkerboard'),
+        makeSphere(make(0.0, 1.0, -0.25), 1.0, 'shiny'),
+        makeSphere(make(-1.0, 0.5, 1.5), 0.5, 'shiny'),
+        makeSphere(make(-4, 0.7, -1.5), 0.7, 'matt'),
     ],
     lights: [
-        { pos: { x: -2.0, y: 2.5, z: 0.0 }, color: fromHex('7d1212') },
-        { pos: { x: 1.5, y: 2.5, z: 1.5 }, color: fromHex('12127d') },
-        { pos: { x: 1.5, y: 2.5, z: -1.5 }, color: fromHex('127d12') },
-        { pos: { x: 0.0, y: 3.5, z: 0.0 }, color: fromHex('363659') },
+        { pos: make(-2.0, 2.5, 0.0), color: fromHex('7d1212') },
+        { pos: make(1.5, 2.5, 1.5), color: fromHex('12127d') },
+        { pos: make(1.5, 2.5, -1.5), color: fromHex('127d12') },
+        { pos: make(0.0, 3.5, 0.0), color: fromHex('363659') },
     ],
 });
 
-const pos = { x: 4.0, y: 3.0, z: 5.0 };
-const tg = { x: -1.0, y: 0.5, z: 0.0 };
+const pos = make(4.0, 3.0, 5.0);
+const tg = make(-1.0, 0.5, 0.0);
 const makeDefaultCamera = (width: number, height: number, angle: number): Camera =>
-    makeCamera({
-        x: Math.cos(angle) * (pos.x - tg.x) - Math.sin(angle) * (pos.z - tg.z) + tg.x,
-        y: pos.y,
-        z: Math.sin(angle) * (pos.x - tg.x) + Math.cos(angle) * (pos.z - tg.z) + tg.z,
-    }, tg, width, height);
+    makeCamera(make(
+        Math.cos(angle) * (pos.x - tg.x) - Math.sin(angle) * (pos.z - tg.z) + tg.x,
+        pos.y,
+        Math.sin(angle) * (pos.x - tg.x) + Math.cos(angle) * (pos.z - tg.z) + tg.z,
+    ), tg, width, height);
 
 document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;

@@ -4,23 +4,31 @@ export interface Vector {
     readonly z: number;
 }
 
-export const times = (k: number, v: Vector): Vector => ({
-    x: k * v.x,
-    y: k * v.y,
-    z: k * v.z,
-});
+export const make = (x: number, y: number, z: number): Vector => {
+    return {
+        x,
+        y,
+        z,
+    };
+};
 
-export const minus = (v1: Vector, v2: Vector): Vector => ({
-    x: v1.x - v2.x,
-    y: v1.y - v2.y,
-    z: v1.z - v2.z,
-});
+export const times = (k: number, v: Vector): Vector => make(
+    k * v.x,
+    k * v.y,
+    k * v.z,
+);
 
-export const plus = (v1: Vector, v2: Vector): Vector => ({
-    x: v1.x + v2.x,
-    y: v1.y + v2.y,
-    z: v1.z + v2.z,
-});
+export const minus = (v1: Vector, v2: Vector): Vector => make(
+    v1.x - v2.x,
+    v1.y - v2.y,
+    v1.z - v2.z,
+);
+
+export const plus = (v1: Vector, v2: Vector): Vector => make(
+    v1.x + v2.x,
+    v1.y + v2.y,
+    v1.z + v2.z,
+);
 
 export const dot = (v1: Vector, v2: Vector): number =>
     v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -33,8 +41,8 @@ export const norm = (v: Vector): Vector => {
     return times((vmag === 0) ? Infinity : 1.0 / vmag, v);
 };
 
-export const cross = (v1: Vector, v2: Vector): Vector => ({
-    x: v1.y * v2.z - v1.z * v2.y,
-    y: v1.z * v2.x - v1.x * v2.z,
-    z: v1.x * v2.y - v1.y * v2.x,
-});
+export const cross = (v1: Vector, v2: Vector): Vector => make(
+    v1.y * v2.z - v1.z * v2.y,
+    v1.z * v2.x - v1.x * v2.z,
+    v1.x * v2.y - v1.y * v2.x,
+);
