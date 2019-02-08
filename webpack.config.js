@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = env => ({
-    devtool: env.NODE_ENV === 'production' ? 'inline-source-map' : false,
+    devtool: env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
     entry: {
         main: './src/main.ts',
         worker: './src/worker.ts',
