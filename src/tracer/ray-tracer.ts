@@ -84,26 +84,32 @@ export class RayTracer {
     }
 
     private getNaturalColor(body: Body, pos: Vector, normal: Vector, rd: Vector) {
+        const surface = this.surfaces[body.surfaceId];
+
         return this.scene.lights.reduce((col: c.Color, light: Light) => {
             const ldis = minus(light.pos, pos);
             const livec = norm(ldis);
             const neatIsect = this.testRay({ start: pos, dir: livec });
-            const isInShadow = !neatIsect ? false : (neatIsect <= mag(ldis));
+            const isInShadow = neatIsect && mag(ldis) > neatIsect;
+
             if (isInShadow) {
                 return col;
             } else {
                 const illum = dot(livec, normal);
-                const lcolor = (illum > 0) ? c.scale(illum, light.color)
+                const lcolor = (illum > 0) 
+                    ? c.scale(illum, light.color)
                     : c.defaultColor;
+
                 const specular = dot(livec, norm(rd));
                 const scolor = (specular > 0)
-                    ? c.scale(Math.pow(specular, this.surfaces[body.surfaceId].roughness), light.color)
+                    ? c.scale(specular ** surface.roughness, light.color)
                     : c.defaultColor;
+
                 return c.plus(
                     col,
                     c.plus(
-                        c.times(this.surfaces[body.surfaceId].diffuse(pos), lcolor),
-                        c.times(this.surfaces[body.surfaceId].specular(pos), scolor)
+                        c.times(surface.diffuse(pos), lcolor),
+                        c.times(surface.specular(pos), scolor)
                     )
                 );
             }

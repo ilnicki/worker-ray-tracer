@@ -1,7 +1,7 @@
 export interface Color {
-    r: number;
-    g: number;
-    b: number;
+    readonly r: number;
+    readonly g: number;
+    readonly b: number;
 }
 
 export const white: Color = { r: 1.0, g: 1.0, b: 1.0 };
@@ -10,14 +10,23 @@ export const black: Color = { r: 0.0, g: 0.0, b: 0.0 };
 export const background: Color = black;
 export const defaultColor: Color = black;
 
-export const scale = (k: number, v: Color): Color =>
-    ({ r: k * v.r, g: k * v.g, b: k * v.b });
+export const scale = (k: number, c: Color): Color => ({
+    r: k * c.r,
+    g: k * c.g,
+    b: k * c.b,
+});
 
-export const plus = (v1: Color, v2: Color): Color =>
-    ({ r: v1.r + v2.r, g: v1.g + v2.g, b: v1.b + v2.b });
+export const plus = (c1: Color, c2: Color): Color => ({
+    r: c1.r + c2.r,
+    g: c1.g + c2.g,
+    b: c1.b + c2.b,
+});
 
-export const times = (v1: Color, v2: Color): Color =>
-    ({ r: v1.r * v2.r, g: v1.g * v2.g, b: v1.b * v2.b });
+export const times = (c1: Color, c2: Color): Color => ({ 
+    r: c1.r * c2.r,
+    g: c1.g * c2.g,
+    b: c1.b * c2.b,
+});
 
 export const toDrawingColor = (c: Color): Color => {
     return {
