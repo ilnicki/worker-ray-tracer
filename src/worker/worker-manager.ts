@@ -20,7 +20,7 @@ export class WorkerManager {
         return Promise.all(this.pool.map(wc => wc.setCamera(camera))).then(() => null);
     }
 
-    public trace(): Promise<Frame> {
+    public trace(id: number): Promise<Frame> {
         return Promise.all(this.pool.map((wc, id, { length }) =>
             wc.traceRect({
                 x: 0,
@@ -28,6 +28,9 @@ export class WorkerManager {
                 w: this.camera.width,
                 h: Math.ceil(this.camera.height / length),
             })
-        ));
+        )).then(chunks => ({
+            id,
+            chunks,
+        }));
     }
 }
