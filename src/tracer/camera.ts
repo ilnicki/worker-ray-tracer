@@ -1,4 +1,4 @@
-import { cross, minus, norm, times, Vector, make } from './vector';
+import { cross, make, minus, norm, times, Vector } from './vector';
 
 export interface Camera {
     pos: Vector;

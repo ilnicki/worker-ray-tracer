@@ -4,8 +4,8 @@ import { fromHex } from './tracer/color';
 import { makePlane } from './tracer/plane';
 import { Scene } from './tracer/scene';
 import { makeSphere } from './tracer/sphere';
-import { WorkerManager } from './worker/worker-manager';
 import { make } from './tracer/vector';
+import { WorkerManager } from './worker/worker-manager';
 
 const makeDefaultScene = (): Scene => ({
     bodies: [

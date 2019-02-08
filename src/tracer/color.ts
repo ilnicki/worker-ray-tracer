@@ -22,7 +22,7 @@ export const plus = (c1: Color, c2: Color): Color => ({
     b: c1.b + c2.b,
 });
 
-export const times = (c1: Color, c2: Color): Color => ({ 
+export const times = (c1: Color, c2: Color): Color => ({
     r: c1.r * c2.r,
     g: c1.g * c2.g,
     b: c1.b * c2.b,

@@ -21,10 +21,10 @@ export class WorkerManager {
     }
 
     public trace(id: number): Promise<Frame> {
-        return Promise.all(this.pool.map((wc, id, { length }) =>
+        return Promise.all(this.pool.map((wc, num, { length }) =>
             wc.traceRect({
                 x: 0,
-                y: Math.floor(this.camera.height / length * id),
+                y: Math.floor(this.camera.height / length * num),
                 w: this.camera.width,
                 h: Math.ceil(this.camera.height / length),
             })

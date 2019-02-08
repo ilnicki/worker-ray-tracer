@@ -97,7 +97,7 @@ export class RayTracer {
                 return col;
             } else {
                 const illum = dot(livec, normal);
-                const lcolor = (illum > 0) 
+                const lcolor = (illum > 0)
                     ? c.scale(illum, light.color)
                     : c.defaultColor;
 

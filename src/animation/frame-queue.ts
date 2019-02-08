@@ -3,7 +3,7 @@ import { Frame } from './frame';
 const empty: Frame = { chunks: [] };
 
 export class FrameQueue {
-    private items: Array<Frame>;
+    private items: Frame[];
 
     constructor(frameCount = 16) {
         this.items = new Array<Frame>(frameCount);
