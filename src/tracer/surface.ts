@@ -26,7 +26,7 @@ export const matt: Surface = {
 export const checkerboard: Surface = {
     diffuse: pos => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? white : black,
     specular: always(white),
-    reflect: pos => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? 0.1 : 0.7,
+    reflect: pos => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? 0.15 : 0.5,
     roughness: 150,
 };
 
