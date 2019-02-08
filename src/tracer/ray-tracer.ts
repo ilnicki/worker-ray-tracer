@@ -35,18 +35,14 @@ export class RayTracer {
     }
 
     private intersections(ray: Ray): Intersection {
-        return this.scene.bodies
-            .map(body => (this.bodies[body.handlerId] as BodyHandler).intersect(ray, body))
-            .reduce((closest, inter) => (!closest || inter && inter.dist < closest.dist) ? inter : closest, null);
-
-        // let closest: Intersection;
-        // for (const body of this.scene.bodies) {
-        //     const inter = (this.bodies[body.handlerId] as BodyHandler).intersect(ray, body);
-        //     if (!closest || (inter && inter.dist < closest.dist)) {
-        //         closest = inter;
-        //     }
-        // }
-        // return closest;
+        let closest: Intersection = null;
+        for (const body of this.scene.bodies) {
+            const inter = this.bodies[body.handlerId].intersect(ray, body);
+            if (!closest || (inter && inter.dist < closest.dist)) {
+                closest = inter;
+            }
+        }
+        return closest;
     }
 
     private testRay(ray: Ray): number {
