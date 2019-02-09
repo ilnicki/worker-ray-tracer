@@ -1,4 +1,3 @@
-import { Intersection } from './intersection';
 import { planeHandler } from './plane';
 import { Ray } from './ray';
 import { sphereHandler } from './sphere';
@@ -11,7 +10,7 @@ export interface Body {
 }
 
 export interface BodyHandler<T extends Body = Body> {
-    intersect: (ray: Ray, body: T) => Intersection;
+    intersect: (ray: Ray, body: T) => number;
     normal: (pos: Vector, body: T) => Vector;
 }
 

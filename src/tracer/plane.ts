@@ -1,5 +1,4 @@
 import { Body, BodyHandler } from './body';
-import { Intersection } from './intersection';
 import { Ray } from './ray';
 import { SurfaceId } from './surface';
 import { dot, norm } from './vector';
@@ -20,15 +19,9 @@ export const makePlane = (normal: Vector, offset: number, surfaceId: SurfaceId):
 });
 
 export const planeHandler: BodyHandler<Plane> = {
-    intersect(ray: Ray, plane: Plane): Intersection {
+    intersect: (ray: Ray, plane: Plane): number => {
         const denom = dot(plane.normal, ray.dir);
-
-        if (denom > 0) {
-            return null;
-        } else {
-            const dist = (dot(plane.normal, ray.start) + plane.offset) / (-denom);
-            return { body: plane, ray, dist };
-        }
+        return denom > 0 ? null : (dot(plane.normal, ray.start) + plane.offset) / (-denom);
     },
 
     normal: (_pos: Vector, plane: Plane) => plane.normal,
