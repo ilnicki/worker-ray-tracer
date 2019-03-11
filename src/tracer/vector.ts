@@ -1,7 +1,7 @@
 export interface Vector {
-    x: number;
-    y: number;
-    z: number;
+    readonly x: number;
+    readonly y: number;
+    readonly z: number;
 }
 
 export const times = (k: number, v: Vector): Vector => ({
@@ -25,8 +25,7 @@ export const plus = (v1: Vector, v2: Vector): Vector => ({
 export const dot = (v1: Vector, v2: Vector): number =>
     v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 
-export const mag = (v: Vector): number =>
-    Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+export const mag = (v: Vector): number => Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
 
 export const norm = (v: Vector): Vector => {
     const vmag = mag(v);
