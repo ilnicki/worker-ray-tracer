@@ -1,17 +1,16 @@
-import { Body, BodyHandler, BodyHandlerRegistry, registry as bodyRegistry } from './body';
+import { Body } from './bodies/body';
+import { getBodyHandler } from './bodies/handlers';
 import * as c from './color';
 import { Intersection } from './intersection';
 import { Light } from './light';
 import { Ray } from './ray';
 import { Scene } from './scene';
-import { registry as surfaceRegistry, SurfaceRegistry } from './surface';
+import { getSurfaceHandler } from './surfaces/handlers';
 import { dot, mag, minus, norm, plus, times, Vector } from './vector';
 
 export class RayTracer {
     public scene: Scene;
     private maxDepth = 5;
-    private surfaces: SurfaceRegistry = surfaceRegistry;
-    private bodies: BodyHandlerRegistry = bodyRegistry;
 
     public tracePoint(x: number, y: number): c.Color {
         return c.toDrawingColor(this.traceRay({
@@ -25,10 +24,14 @@ export class RayTracer {
             plus(
                 this.scene.camera.forward,
                 plus(
-                    times((x - (this.scene.camera.width / 2.0)) / 2.0 / this.scene.camera.width,
-                        this.scene.camera.right),
-                    times(-(y - (this.scene.camera.height / 2.0)) / 2.0 / this.scene.camera.height,
-                        this.scene.camera.up)
+                    times(
+                        (x - (this.scene.camera.width / 2.0)) / 2.0 / this.scene.camera.width,
+                        this.scene.camera.right
+                    ),
+                    times(
+                        -(y - (this.scene.camera.height / 2.0)) / 2.0 / this.scene.camera.height,
+                        this.scene.camera.up
+                    )
                 )
             )
         );
@@ -36,12 +39,12 @@ export class RayTracer {
 
     private intersections(ray: Ray): Intersection {
         return this.scene.bodies
-            .map(body => (this.bodies[body.handlerId] as BodyHandler).intersect(ray, body))
+            .map(body => getBodyHandler(body).intersect(ray, body))
             .reduce((closest, inter) => (!closest || inter && inter.dist < closest.dist) ? inter : closest, null);
 
         // let closest: Intersection;
         // for (const body of this.scene.bodies) {
-        //     const inter = (this.bodies[body.handlerId] as BodyHandler).intersect(ray, body);
+        //     const inter = getBodyHandler(body.type).intersect(ray, body);
         //     if (!closest || (inter && inter.dist < closest.dist)) {
         //         closest = inter;
         //     }
@@ -62,7 +65,7 @@ export class RayTracer {
     private shade(isect: Intersection, depth: number) {
         const d = isect.ray.dir;
         const pos = plus(times(isect.dist, d), isect.ray.start);
-        const bodyHandler = this.bodies[isect.body.handlerId] as BodyHandler;
+        const bodyHandler = getBodyHandler(isect.body);
         const normal = bodyHandler.normal(pos, isect.body);
         const reflectDir = minus(d, times(2, times(dot(normal, d), normal)));
 
@@ -78,12 +81,14 @@ export class RayTracer {
 
     private getReflectionColor(body: Body, pos: Vector, rd: Vector, depth: number) {
         return c.scale(
-            this.surfaces[body.surfaceId].reflect(pos),
+            getSurfaceHandler(body.surface).reflect(body.surface, pos),
             this.traceRay({ start: pos, dir: rd }, depth + 1)
         );
     }
 
     private getNaturalColor(body: Body, pos: Vector, normal: Vector, rd: Vector) {
+        const surfaceHandler = getSurfaceHandler(body.surface);
+
         return this.scene.lights.reduce((col: c.Color, light: Light) => {
             const ldis = minus(light.pos, pos);
             const livec = norm(ldis);
@@ -97,13 +102,15 @@ export class RayTracer {
                     : c.defaultColor;
                 const specular = dot(livec, norm(rd));
                 const scolor = (specular > 0)
-                    ? c.scale(Math.pow(specular, this.surfaces[body.surfaceId].roughness), light.color)
-                    : c.defaultColor;
+                    ? c.scale(
+                        Math.pow(specular, surfaceHandler.roughness(body.surface, pos)),
+                        light.color
+                    ) : c.defaultColor;
                 return c.plus(
                     col,
                     c.plus(
-                        c.times(this.surfaces[body.surfaceId].diffuse(pos), lcolor),
-                        c.times(this.surfaces[body.surfaceId].specular(pos), scolor)
+                        c.times(surfaceHandler.diffuse(body.surface, pos), lcolor),
+                        c.times(surfaceHandler.specular(body.surface, pos), scolor)
                     )
                 );
             }

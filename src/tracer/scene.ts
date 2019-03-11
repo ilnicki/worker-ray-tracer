@@ -1,4 +1,4 @@
-import { Body } from './body';
+import { Body } from './bodies/body';
 import { Camera } from './camera';
 import { Light } from './light';
 

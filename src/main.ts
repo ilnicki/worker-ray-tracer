@@ -1,17 +1,20 @@
 import { FrameQueue } from './animation/frame-queue';
+import { makePlane } from './tracer/bodies/plane';
+import { makeSphere } from './tracer/bodies/sphere';
 import { Camera, makeCamera } from './tracer/camera';
 import { fromHex } from './tracer/color';
-import { makePlane } from './tracer/plane';
 import { Scene } from './tracer/scene';
-import { makeSphere } from './tracer/sphere';
+import { makeCheckerboard } from './tracer/surfaces/checkerboard';
+import { makeMatt } from './tracer/surfaces/matt';
+import { makeShiny } from './tracer/surfaces/shiny';
 import { WorkerManager } from './worker/worker-manager';
 
 const makeDefaultScene = (): Scene => ({
     bodies: [
-        makePlane({ x: 0.0, y: 1.0, z: 0.0 }, 0.0, 'checkerboard'),
-        makeSphere({ x: 0.0, y: 1.0, z: -0.25 }, 1.0, 'shiny'),
-        makeSphere({ x: -1.0, y: 0.5, z: 1.5 }, 0.5, 'shiny'),
-        makeSphere({ x: -4, y: 0.7, z: -1.5 }, 0.7, 'matt'),
+        makePlane({ x: 0.0, y: 1.0, z: 0.0 }, 0.0, makeCheckerboard()),
+        makeSphere({ x: 0.0, y: 1.0, z: -0.25 }, 1.0, makeShiny()),
+        makeSphere({ x: -1.0, y: 0.5, z: 1.5 }, 0.5, makeShiny()),
+        makeSphere({ x: -4, y: 0.7, z: -1.5 }, 0.7, makeMatt()),
     ],
     lights: [
         { pos: { x: -2.0, y: 2.5, z: 0.0 }, color: fromHex('7d1212') },
