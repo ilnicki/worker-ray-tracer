@@ -23,11 +23,11 @@
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "ts-loader": "^5.3.3",
-    "tslint": "^5.12.1",
-    "typescript": "^3.2.2",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14",
+    "tslint": "^5.13.1",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1",
     "worker-loader": "^2.0.0"
   },
   "dependencies": {
