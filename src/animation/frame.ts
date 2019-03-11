@@ -1,3 +1,6 @@
 import { Chunk } from './chunk';
 
-export type Frame = Chunk[];
+export interface Frame {
+    id?: number;
+    chunks: Chunk[];
+}

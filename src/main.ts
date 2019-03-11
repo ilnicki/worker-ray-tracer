@@ -41,22 +41,22 @@ document.body.onload = async () => {
         const queue = new FrameQueue();
 
         const trydraw = () => window.requestAnimationFrame(() => {
-            queue.dequeue().forEach(({ position: { x, y }, image }) => {
+            queue.dequeue().chunks.forEach(({ position: { x, y }, image }) => {
                 ctx.putImageData(image, x, y);
             });
             trydraw();
         });
 
-        setTimeout(trydraw, 3000);
+        setTimeout(trydraw);
 
         const scene = makeDefaultScene();
         await manager.setScene(scene);
 
-        for (let x = 0; x < 10; x += 0.01) {
-            const camera = makeDefaultCamera(canvas.width, canvas.height, x);
+        for (let angle = 0, frameId = 0; angle < 3 && frameId < 1; angle += 0.01, frameId++) {
+            const camera = makeDefaultCamera(canvas.width, canvas.height, angle);
             await manager.setCamera(camera);
 
-            await manager.trace().then(frame => queue.enqueue(frame));
+            await manager.trace(frameId).then(frame => queue.enqueue(frame));
         }
 
     } else {
