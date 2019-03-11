@@ -1,4 +1,3 @@
-import { Intersection } from '../intersection';
 import { Ray } from '../ray';
 import { Surface } from '../surfaces/surface';
 import { dot, minus, norm } from '../vector';
@@ -21,7 +20,7 @@ export const makeSphere = (center: Vector, radius: number, surface: Surface): Sp
 });
 
 export const sphereHandler: BodyHandler<Sphere> = {
-    intersect(ray: Ray, sphere: Sphere): Intersection<Sphere> {
+    intersect(ray: Ray, sphere: Sphere): number {
         const eo = minus(sphere.center, ray.start);
         const v = dot(eo, ray.dir);
         let dist = 0;
@@ -33,7 +32,7 @@ export const sphereHandler: BodyHandler<Sphere> = {
             }
         }
 
-        return dist !== 0 ? { body: sphere, ray, dist } : null;
+        return dist !== 0 ? dist : null;
     },
 
     normal: (pos: Vector, sphere: Sphere): Vector => norm(minus(pos, sphere.center)),

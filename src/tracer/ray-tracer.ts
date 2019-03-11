@@ -38,18 +38,21 @@ export class RayTracer {
     }
 
     private intersections(ray: Ray): Intersection {
-        return this.scene.bodies
-            .map(body => getBodyHandler(body).intersect(ray, body))
-            .reduce((closest, inter) => (!closest || inter && inter.dist < closest.dist) ? inter : closest, null);
+        const closest: Intersection = {
+            body: null,
+            ray,
+            dist: Infinity,
+        };
 
-        // let closest: Intersection;
-        // for (const body of this.scene.bodies) {
-        //     const inter = getBodyHandler(body.type).intersect(ray, body);
-        //     if (!closest || (inter && inter.dist < closest.dist)) {
-        //         closest = inter;
-        //     }
-        // }
-        // return closest;
+        for (const body of this.scene.bodies) {
+            const interDist = getBodyHandler(body).intersect(ray, body);
+            if (!closest || (interDist !== null && interDist < closest.dist)) {
+                closest.dist = interDist;
+                closest.body = body;
+            }
+        }
+
+        return closest.body && closest;
     }
 
     private testRay(ray: Ray): number {
@@ -63,11 +66,11 @@ export class RayTracer {
     }
 
     private shade(isect: Intersection, depth: number) {
-        const d = isect.ray.dir;
-        const pos = plus(times(isect.dist, d), isect.ray.start);
+        const dir = isect.ray.dir;
+        const pos = plus(times(isect.dist, dir), isect.ray.start);
         const bodyHandler = getBodyHandler(isect.body);
         const normal = bodyHandler.normal(pos, isect.body);
-        const reflectDir = minus(d, times(2, times(dot(normal, d), normal)));
+        const reflectDir = minus(dir, times(2, times(dot(normal, dir), normal)));
 
         const naturalColor = c.plus(
             c.background,
@@ -89,28 +92,31 @@ export class RayTracer {
     private getNaturalColor(body: Body, pos: Vector, normal: Vector, rd: Vector) {
         const surfaceHandler = getSurfaceHandler(body.surface);
 
-        return this.scene.lights.reduce((col: c.Color, light: Light) => {
-            const ldis = minus(light.pos, pos);
-            const livec = norm(ldis);
-            const neatIsect = this.testRay({ start: pos, dir: livec });
-            const isInShadow = !neatIsect ? false : (neatIsect <= mag(ldis));
+        return this.scene.lights.reduce((color: c.Color, light: Light) => {
+            const lightDistance = minus(light.pos, pos);
+            const lightDirection = norm(lightDistance);
+
+            const neatIsect = this.testRay({ start: pos, dir: lightDirection });
+            const isInShadow = !neatIsect ? false : (neatIsect <= mag(lightDistance));
+
             if (isInShadow) {
-                return col;
+                return color;
             } else {
-                const illum = dot(livec, normal);
-                const lcolor = (illum > 0) ? c.scale(illum, light.color)
+                const illumination = dot(lightDirection, normal);
+                const lightColor = (illumination > 0)
+                    ? c.scale(illumination, light.color)
                     : c.defaultColor;
-                const specular = dot(livec, norm(rd));
-                const scolor = (specular > 0)
+                const specular = dot(lightDirection, norm(rd));
+                const specularColor = (specular > 0)
                     ? c.scale(
-                        Math.pow(specular, surfaceHandler.roughness(body.surface, pos)),
+                        specular ** surfaceHandler.roughness(body.surface, pos),
                         light.color
                     ) : c.defaultColor;
                 return c.plus(
-                    col,
+                    color,
                     c.plus(
-                        c.times(surfaceHandler.diffuse(body.surface, pos), lcolor),
-                        c.times(surfaceHandler.specular(body.surface, pos), scolor)
+                        c.times(surfaceHandler.diffuse(body.surface, pos), lightColor),
+                        c.times(surfaceHandler.specular(body.surface, pos), specularColor)
                     )
                 );
             }
