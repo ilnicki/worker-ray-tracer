@@ -13,7 +13,7 @@ export const detectIntersection = (ray: Ray, bodies: Body[]): Intersection => {
     let dist = Infinity;
 
     for (const bodyEntry of bodies) {
-        const interDist = getBodyHandler(bodyEntry).intersect(ray, body);
+        const interDist = getBodyHandler(bodyEntry).intersect(ray, bodyEntry);
         if (interDist !== null && interDist < dist) {
             dist = interDist;
             body = bodyEntry;
