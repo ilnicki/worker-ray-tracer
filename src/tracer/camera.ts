@@ -25,11 +25,3 @@ export const camera = (pos: Vector, lookAt: Vector, width: number, height: numbe
         height,
     };
 };
-
-export const iterate = function*(camera: Camera) {
-    for (let y = 0; y < camera.height; y++) {
-        for (let x = 0; x < camera.width; x++) {
-            yield { x, y };
-        }
-    }
-};
