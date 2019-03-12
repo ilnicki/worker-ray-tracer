@@ -1,4 +1,4 @@
-import { cross, minus, norm, times, Vector } from './vector';
+import { cross, minus, norm, times, Vector, vector } from './vector';
 
 export interface Camera {
     pos: Vector;
@@ -9,7 +9,7 @@ export interface Camera {
     height: number;
 }
 
-const down: Vector = { x: 0.0, y: -1.0, z: 0.0 };
+const down: Vector = vector(0.0, -1.0, 0.0);
 
 export const makeCamera = (pos: Vector, lookAt: Vector, width: number, height: number): Camera => {
     const forward = norm(minus(lookAt, pos));

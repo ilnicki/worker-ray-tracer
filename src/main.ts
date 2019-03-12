@@ -7,31 +7,33 @@ import { Scene } from './tracer/scene';
 import { makeCheckerboard } from './tracer/surfaces/checkerboard';
 import { makeMatt } from './tracer/surfaces/matt';
 import { makeShiny } from './tracer/surfaces/shiny';
+import { vector } from './tracer/vector';
 import { WorkerManager } from './worker/worker-manager';
 
 const makeDefaultScene = (): Scene => ({
     bodies: [
-        makePlane({ x: 0.0, y: 1.0, z: 0.0 }, 0.0, makeCheckerboard()),
-        makeSphere({ x: 0.0, y: 1.0, z: -0.25 }, 1.0, makeShiny()),
-        makeSphere({ x: -1.0, y: 0.5, z: 1.5 }, 0.5, makeShiny()),
-        makeSphere({ x: -4, y: 0.7, z: -1.5 }, 0.7, makeMatt()),
+        makePlane(vector(0.0, 1.0, 0.0), 0.0, makeCheckerboard()),
+        makeSphere(vector(0.0, 1.0, -0.25), 1.0, makeShiny()),
+        makeSphere(vector(-1.0, 0.5, 1.5), 0.5, makeShiny()),
+        makeSphere(vector(-4, 0.7, -1.5), 0.7, makeMatt()),
     ],
     lights: [
-        { pos: { x: -2.0, y: 2.5, z: 0.0 }, color: fromHex('7d1212') },
-        { pos: { x: 1.5, y: 2.5, z: 1.5 }, color: fromHex('12127d') },
-        { pos: { x: 1.5, y: 2.5, z: -1.5 }, color: fromHex('127d12') },
-        { pos: { x: 0.0, y: 3.5, z: 0.0 }, color: fromHex('363659') },
+        { pos: vector(-2.0, 2.5, 0.0), color: fromHex('7d1212') },
+        { pos: vector(1.5, 2.5, 1.5), color: fromHex('12127d') },
+        { pos: vector(1.5, 2.5, -1.5), color: fromHex('127d12') },
+        { pos: vector(0.0, 3.5, 0.0), color: fromHex('363659') },
     ],
 });
 
-const pos = { x: 4.0, y: 3.0, z: 5.0 };
-const tg = { x: -1.0, y: 0.5, z: 0.0 };
+const pos = vector(4.0, 3.0, 5.0);
+const tg = vector(-1.0, 0.5, 0.0);
+
 const makeDefaultCamera = (width: number, height: number, angle: number): Camera =>
-    makeCamera({
-        x: Math.cos(angle) * (pos.x - tg.x) - Math.sin(angle) * (pos.z - tg.z) + tg.x,
-        y: pos.y,
-        z: Math.sin(angle) * (pos.x - tg.x) + Math.cos(angle) * (pos.z - tg.z) + tg.z,
-    }, tg, width, height);
+    makeCamera(vector(
+        Math.cos(angle) * (pos.x - tg.x) - Math.sin(angle) * (pos.z - tg.z) + tg.x,
+        pos.y,
+        Math.sin(angle) * (pos.x - tg.x) + Math.cos(angle) * (pos.z - tg.z) + tg.z,
+    ), tg, width, height);
 
 document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
