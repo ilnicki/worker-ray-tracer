@@ -1,4 +1,5 @@
-import { cross, minus, norm, times, Vector, vector } from './vector';
+import { Ray } from './ray';
+import { cross, minus, norm, plus, times, Vector, vector } from './vector';
 
 export interface Camera {
     pos: Vector;
@@ -25,3 +26,22 @@ export const camera = (pos: Vector, lookAt: Vector, width: number, height: numbe
         height,
     };
 };
+
+export const cameraRay = (cam: Camera, x: number, y: number): Ray => ({
+        start: cam.pos,
+        dir: norm(
+            plus(
+                cam.forward,
+                plus(
+                    times(
+                        (x - (cam.width / 2.0)) / 2.0 / cam.width,
+                        cam.right
+                    ),
+                    times(
+                        -(y - (cam.height / 2.0)) / 2.0 / cam.height,
+                        cam.up
+                    )
+                )
+            )
+        ),
+    });

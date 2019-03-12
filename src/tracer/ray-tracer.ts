@@ -1,11 +1,12 @@
-import { Body } from './bodies/body';
 import { getBodyHandler } from './bodies/handlers';
+import { cameraRay } from './camera';
 import * as c from './color';
-import { Intersection } from './intersection';
+import { detectIntersection, Intersection } from './intersection';
 import { Light } from './light';
 import { Ray } from './ray';
 import { Scene } from './scene';
 import { getSurfaceHandler } from './surfaces/handlers';
+import { Surface } from './surfaces/surface';
 import { dot, mag, minus, norm, plus, times, Vector } from './vector';
 
 export class RayTracer {
@@ -13,55 +14,18 @@ export class RayTracer {
     private maxDepth = 5;
 
     public tracePoint(x: number, y: number): c.Color {
-        return c.toDrawingColor(this.traceRay({
-            start: this.scene.camera.pos,
-            dir: this.getPoint(x, y),
-        }, 0));
-    }
-
-    private getPoint(x: number, y: number): Vector {
-        return norm(
-            plus(
-                this.scene.camera.forward,
-                plus(
-                    times(
-                        (x - (this.scene.camera.width / 2.0)) / 2.0 / this.scene.camera.width,
-                        this.scene.camera.right
-                    ),
-                    times(
-                        -(y - (this.scene.camera.height / 2.0)) / 2.0 / this.scene.camera.height,
-                        this.scene.camera.up
-                    )
-                )
-            )
+        return c.toDrawingColor(
+            this.traceRay(cameraRay(this.scene.camera, x, y), 0)
         );
     }
 
-    private intersections(ray: Ray): Intersection {
-        const closest: Intersection = {
-            body: null,
-            ray,
-            dist: Infinity,
-        };
-
-        for (const body of this.scene.bodies) {
-            const interDist = getBodyHandler(body).intersect(ray, body);
-            if (!closest || (interDist !== null && interDist < closest.dist)) {
-                closest.dist = interDist;
-                closest.body = body;
-            }
-        }
-
-        return closest.body && closest;
-    }
-
     private testRay(ray: Ray): number {
-        const isect = this.intersections(ray);
+        const isect = detectIntersection(ray, this.scene.bodies);
         return isect ? isect.dist : null;
     }
 
     private traceRay(ray: Ray, depth: number): c.Color {
-        const isect = this.intersections(ray);
+        const isect = detectIntersection(ray, this.scene.bodies);
         return isect ? this.shade(isect, depth) : c.background;
     }
 
@@ -74,23 +38,23 @@ export class RayTracer {
 
         const naturalColor = c.plus(
             c.background,
-            this.getNaturalColor(isect.body, pos, normal, reflectDir)
+            this.getNaturalColor(isect.body.surface, pos, normal, reflectDir)
         );
         const reflectedColor = (depth >= this.maxDepth)
             ? c.grey
-            : this.getReflectionColor(isect.body, pos, reflectDir, depth);
+            : this.getReflectionColor(isect.body.surface, pos, reflectDir, depth);
         return c.plus(naturalColor, reflectedColor);
     }
 
-    private getReflectionColor(body: Body, pos: Vector, rd: Vector, depth: number) {
+    private getReflectionColor(surface: Surface, pos: Vector, reflectDir: Vector, depth: number) {
         return c.scale(
-            getSurfaceHandler(body.surface).reflect(body.surface, pos),
-            this.traceRay({ start: pos, dir: rd }, depth + 1)
+            getSurfaceHandler(surface).reflect(surface, pos),
+            this.traceRay({ start: pos, dir: reflectDir }, depth + 1)
         );
     }
 
-    private getNaturalColor(body: Body, pos: Vector, normal: Vector, rd: Vector) {
-        const surfaceHandler = getSurfaceHandler(body.surface);
+    private getNaturalColor(surface: Surface, pos: Vector, normal: Vector, reflectDir: Vector) {
+        const surfaceHandler = getSurfaceHandler(surface);
 
         return this.scene.lights.reduce((color: c.Color, light: Light) => {
             const lightDistance = minus(light.pos, pos);
@@ -106,17 +70,18 @@ export class RayTracer {
                 const lightColor = (illumination > 0)
                     ? c.scale(illumination, light.color)
                     : c.defaultColor;
-                const specular = dot(lightDirection, norm(rd));
+                const specular = dot(lightDirection, norm(reflectDir));
                 const specularColor = (specular > 0)
                     ? c.scale(
-                        specular ** surfaceHandler.roughness(body.surface, pos),
+                        specular ** surfaceHandler.roughness(surface, pos),
                         light.color
-                    ) : c.defaultColor;
+                    )
+                    : c.defaultColor;
                 return c.plus(
                     color,
                     c.plus(
-                        c.times(surfaceHandler.diffuse(body.surface, pos), lightColor),
-                        c.times(surfaceHandler.specular(body.surface, pos), specularColor)
+                        c.times(surfaceHandler.diffuse(surface, pos), lightColor),
+                        c.times(surfaceHandler.specular(surface, pos), specularColor)
                     )
                 );
             }
