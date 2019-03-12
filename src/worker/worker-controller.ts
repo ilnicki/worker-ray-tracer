@@ -3,10 +3,10 @@ import { Camera } from '../tracer/camera';
 import { Scene } from '../tracer/scene';
 
 export interface Rect {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
+    readonly x: number;
+    readonly y: number;
+    readonly w: number;
+    readonly h: number;
 }
 
 export class WorkerController {
