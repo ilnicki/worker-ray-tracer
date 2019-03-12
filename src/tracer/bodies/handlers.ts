@@ -1,5 +1,5 @@
+import { Vector } from '../../math/vector';
 import { Ray } from '../ray';
-import { Vector } from '../vector';
 import { Body, BodyType } from './body';
 import { planeHandler } from './plane';
 import { sphereHandler } from './sphere';

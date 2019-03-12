@@ -1,13 +1,13 @@
 import { FrameQueue } from './animation/frame-queue';
+import { fromHex } from './math/color';
+import { vector } from './math/vector';
 import { plane } from './tracer/bodies/plane';
 import { sphere } from './tracer/bodies/sphere';
 import { Camera, camera } from './tracer/camera';
-import { fromHex } from './tracer/color';
 import { Scene } from './tracer/scene';
 import { checkerboard } from './tracer/surfaces/checkerboard';
 import { matt } from './tracer/surfaces/matt';
 import { shiny } from './tracer/surfaces/shiny';
-import { vector } from './tracer/vector';
 import { WorkerManager } from './worker/worker-manager';
 
 const defaultScene = (): Scene => ({

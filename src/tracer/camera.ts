@@ -1,5 +1,5 @@
+import { cross, minus, norm, plus, times, Vector, vector } from '../math/vector';
 import { Ray } from './ray';
-import { cross, minus, norm, plus, times, Vector, vector } from './vector';
 
 export interface Camera {
     pos: Vector;

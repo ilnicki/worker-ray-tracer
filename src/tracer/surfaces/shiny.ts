@@ -1,4 +1,4 @@
-import { grey, white } from '../../tracer/color';
+import { grey, white } from '../../math/color';
 import { always } from '../../util/functional';
 import { SurfaceHandler } from './handlers';
 import { Surface, SurfaceType } from './surface';

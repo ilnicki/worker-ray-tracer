@@ -1,4 +1,4 @@
-import { Color } from '../tracer/color';
+import { Color } from '../math/color';
 
 export class ImageDataFiller {
     private pointer = 0;

@@ -1,7 +1,6 @@
+import { dot, minus, norm, Vector } from '../../math/vector';
 import { Ray } from '../ray';
 import { Surface } from '../surfaces/surface';
-import { dot, minus, norm } from '../vector';
-import { Vector } from '../vector';
 import { Body, BodyType } from './body';
 import { BodyHandler } from './handlers';
 

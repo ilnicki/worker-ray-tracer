@@ -16,19 +16,19 @@ export const black: Color = color(0.0, 0.0, 0.0);
 export const background: Color = black;
 export const defaultColor: Color = black;
 
-export const scale = (k: number, v: Color): Color => color(
-    k * v.r,
-    k * v.g,
-    k * v.b,
+export const scale = (col: Color, factor: number): Color => color(
+    col.r * factor,
+    col.g * factor,
+    col.b * factor,
 );
 
-export const plus = (c1: Color, c2: Color): Color => color(
+export const sum = (c1: Color, c2: Color): Color => color(
     c1.r + c2.r,
     c1.g + c2.g,
     c1.b + c2.b,
 );
 
-export const times = (c1: Color, c2: Color): Color => color(
+export const mul = (c1: Color, c2: Color): Color => color(
     c1.r * c2.r,
     c1.g * c2.g,
     c1.b * c2.b,
