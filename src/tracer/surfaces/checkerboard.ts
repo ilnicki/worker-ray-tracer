@@ -7,7 +7,7 @@ export interface Checkerboard extends Surface {
     type: SurfaceType.Checkerboard;
 }
 
-export const makeCheckerboard = (): Checkerboard => ({
+export const checkerboard = (): Checkerboard => ({
     type: SurfaceType.Checkerboard,
 });
 

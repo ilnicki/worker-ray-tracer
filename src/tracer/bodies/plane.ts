@@ -12,7 +12,7 @@ export interface Plane extends Body {
     offset: number;
 }
 
-export const makePlane = (normal: Vector, offset: number, surface: Surface): Plane => ({
+export const plane = (normal: Vector, offset: number, surface: Surface): Plane => ({
     type: BodyType.Plane,
     surface,
     normal: norm(normal),
@@ -20,10 +20,10 @@ export const makePlane = (normal: Vector, offset: number, surface: Surface): Pla
 });
 
 export const planeHandler: BodyHandler<Plane> = {
-    intersect(ray: Ray, plane: Plane): number {
-        const denom = dot(plane.normal, ray.dir);
-        return denom > 0 ? null : (dot(plane.normal, ray.start) + plane.offset) / -denom;
+    intersect(ray: Ray, planeBody: Plane): number {
+        const denom = dot(planeBody.normal, ray.dir);
+        return denom > 0 ? null : (dot(planeBody.normal, ray.start) + planeBody.offset) / -denom;
     },
 
-    normal: (_pos: Vector, plane: Plane): Vector => plane.normal,
+    normal: (_pos: Vector, planeBody: Plane): Vector => planeBody.normal,
 };

@@ -7,7 +7,7 @@ export interface Matt extends Surface {
     type: SurfaceType.Matt;
 }
 
-export const makeMatt = (): Matt => ({
+export const matt = (): Matt => ({
     type: SurfaceType.Matt,
 });
 

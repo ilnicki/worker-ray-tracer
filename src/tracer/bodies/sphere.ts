@@ -12,7 +12,7 @@ export interface Sphere extends Body {
     radius2: number;
 }
 
-export const makeSphere = (center: Vector, radius: number, surface: Surface): Sphere => ({
+export const sphere = (center: Vector, radius: number, surface: Surface): Sphere => ({
     type: BodyType.Sphere,
     surface,
     center,
@@ -20,13 +20,13 @@ export const makeSphere = (center: Vector, radius: number, surface: Surface): Sp
 });
 
 export const sphereHandler: BodyHandler<Sphere> = {
-    intersect(ray: Ray, sphere: Sphere): number {
-        const eo = minus(sphere.center, ray.start);
+    intersect(ray: Ray, sphereBody: Sphere): number {
+        const eo = minus(sphereBody.center, ray.start);
         const v = dot(eo, ray.dir);
         let dist = 0;
 
         if (v >= 0) {
-            const disc = sphere.radius2 - (dot(eo, eo) - v * v);
+            const disc = sphereBody.radius2 - (dot(eo, eo) - v * v);
             if (disc >= 0) {
                 dist = v - Math.sqrt(disc);
             }
@@ -35,5 +35,5 @@ export const sphereHandler: BodyHandler<Sphere> = {
         return dist !== 0 ? dist : null;
     },
 
-    normal: (pos: Vector, sphere: Sphere): Vector => norm(minus(pos, sphere.center)),
+    normal: (pos: Vector, sphereBody: Sphere): Vector => norm(minus(pos, sphereBody.center)),
 };

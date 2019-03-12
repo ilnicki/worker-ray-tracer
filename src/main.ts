@@ -1,21 +1,21 @@
 import { FrameQueue } from './animation/frame-queue';
-import { makePlane } from './tracer/bodies/plane';
-import { makeSphere } from './tracer/bodies/sphere';
-import { Camera, makeCamera } from './tracer/camera';
+import { plane } from './tracer/bodies/plane';
+import { sphere } from './tracer/bodies/sphere';
+import { Camera, camera } from './tracer/camera';
 import { fromHex } from './tracer/color';
 import { Scene } from './tracer/scene';
-import { makeCheckerboard } from './tracer/surfaces/checkerboard';
-import { makeMatt } from './tracer/surfaces/matt';
-import { makeShiny } from './tracer/surfaces/shiny';
+import { checkerboard } from './tracer/surfaces/checkerboard';
+import { matt } from './tracer/surfaces/matt';
+import { shiny } from './tracer/surfaces/shiny';
 import { vector } from './tracer/vector';
 import { WorkerManager } from './worker/worker-manager';
 
-const makeDefaultScene = (): Scene => ({
+const defaultScene = (): Scene => ({
     bodies: [
-        makePlane(vector(0.0, 1.0, 0.0), 0.0, makeCheckerboard()),
-        makeSphere(vector(0.0, 1.0, -0.25), 1.0, makeShiny()),
-        makeSphere(vector(-1.0, 0.5, 1.5), 0.5, makeShiny()),
-        makeSphere(vector(-4, 0.7, -1.5), 0.7, makeMatt()),
+        plane(vector(0.0, 1.0, 0.0), 0.0, checkerboard()),
+        sphere(vector(0.0, 1.0, -0.25), 1.0, shiny()),
+        sphere(vector(-1.0, 0.5, 1.5), 0.5, shiny()),
+        sphere(vector(-4, 0.7, -1.5), 0.7, matt()),
     ],
     lights: [
         { pos: vector(-2.0, 2.5, 0.0), color: fromHex('7d1212') },
@@ -25,15 +25,15 @@ const makeDefaultScene = (): Scene => ({
     ],
 });
 
-const pos = vector(4.0, 3.0, 5.0);
-const tg = vector(-1.0, 0.5, 0.0);
+const position = vector(4.0, 3.0, 5.0);
+const target = vector(-1.0, 0.5, 0.0);
 
-const makeDefaultCamera = (width: number, height: number, angle: number): Camera =>
-    makeCamera(vector(
-        Math.cos(angle) * (pos.x - tg.x) - Math.sin(angle) * (pos.z - tg.z) + tg.x,
-        pos.y,
-        Math.sin(angle) * (pos.x - tg.x) + Math.cos(angle) * (pos.z - tg.z) + tg.z,
-    ), tg, width, height);
+const defaultCamera = (width: number, height: number, angle: number): Camera =>
+    camera(vector(
+        Math.cos(angle) * (position.x - target.x) - Math.sin(angle) * (position.z - target.z) + target.x,
+        position.y,
+        Math.sin(angle) * (position.x - target.x) + Math.cos(angle) * (position.z - target.z) + target.z,
+    ), target, width, height);
 
 document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -51,12 +51,11 @@ document.body.onload = async () => {
 
         setTimeout(trydraw);
 
-        const scene = makeDefaultScene();
+        const scene = defaultScene();
         await manager.setScene(scene);
 
         for (let angle = 0, frameId = 0; angle < 3 && frameId < 1; angle += 0.01, frameId++) {
-            const camera = makeDefaultCamera(canvas.width, canvas.height, angle);
-            await manager.setCamera(camera);
+            await manager.setCamera(defaultCamera(canvas.width, canvas.height, angle));
 
             await manager.trace(frameId).then(frame => queue.enqueue(frame));
         }

@@ -7,7 +7,7 @@ export interface Shiny extends Surface {
     type: SurfaceType.Shiny;
 }
 
-export const makeShiny = (): Shiny => ({
+export const shiny = (): Shiny => ({
     type: SurfaceType.Shiny,
 });
 
