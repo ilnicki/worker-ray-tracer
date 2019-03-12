@@ -10,10 +10,10 @@ export const vector = (x: number, y: number, z: number): Vector => ({
     z,
 });
 
-export const times = (k: number, v: Vector): Vector => vector(
-    k * v.x,
-    k * v.y,
-    k * v.z,
+export const times = (v: Vector, factor: number): Vector => vector(
+    v.x * factor,
+    v.y * factor,
+    v.z * factor,
 );
 
 export const minus = (v1: Vector, v2: Vector): Vector => vector(
@@ -35,7 +35,7 @@ export const mag = (v: Vector): number => Math.sqrt(v.x ** 2 + v.y ** 2 + v.z **
 
 export const norm = (v: Vector): Vector => {
     const vmag = mag(v);
-    return times((vmag === 0) ? Infinity : 1.0 / vmag, v);
+    return times(v, (vmag === 0) ? Infinity : 1.0 / vmag);
 };
 
 export const cross = (v1: Vector, v2: Vector): Vector => vector(

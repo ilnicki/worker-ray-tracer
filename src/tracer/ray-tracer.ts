@@ -31,10 +31,10 @@ export class RayTracer {
 
     private shade(isect: Intersection, depth: number) {
         const dir = isect.ray.dir;
-        const pos = plus(times(isect.dist, dir), isect.ray.start);
+        const pos = plus(times(dir, isect.dist), isect.ray.start);
         const bodyHandler = getBodyHandler(isect.body);
         const normal = bodyHandler.normal(pos, isect.body);
-        const reflectDir = minus(dir, times(2, times(dot(normal, dir), normal)));
+        const reflectDir = norm(minus(dir, times(times(normal, dot(normal, dir)), 2)));
 
         const naturalColor = sum(
             background,
@@ -67,16 +67,18 @@ export class RayTracer {
                 return color;
             } else {
                 const illumination = dot(lightDirection, normal);
-                const lightColor = (illumination > 0)
+                const lightColor = illumination > 0
                     ? scale(light.color, illumination)
                     : defaultColor;
-                const specular = dot(lightDirection, norm(reflectDir));
-                const specularColor = (specular > 0)
+
+                const specular = dot(lightDirection, reflectDir);
+                const specularColor = specular > 0
                     ? scale(
                         light.color,
                         specular ** surfaceHandler.roughness(surface, pos),
                     )
                     : defaultColor;
+
                 return sum(
                     color,
                     sum(
