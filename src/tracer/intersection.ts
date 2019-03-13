@@ -1,5 +1,5 @@
 import { Body } from './bodies/body';
-import { getBodyHandler } from './bodies/handlers';
+import { getBodyHandler } from './bodies/handler-map';
 import { Ray } from './ray';
 
 export interface Intersection<T extends Body = Body> {

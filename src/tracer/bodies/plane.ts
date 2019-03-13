@@ -2,7 +2,7 @@ import { dot, norm, Vector } from '../../math/vector';
 import { Ray } from '../ray';
 import { Surface } from '../surfaces/surface';
 import { Body, BodyType } from './body';
-import { BodyHandler } from './handlers';
+import { BodyHandler } from './handler';
 
 export interface Plane extends Body {
     type: BodyType.Plane;

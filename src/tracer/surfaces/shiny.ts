@@ -1,6 +1,6 @@
 import { grey, white } from '../../math/color';
 import { always } from '../../util/functional';
-import { SurfaceHandler } from './handlers';
+import { SurfaceHandler } from './handler';
 import { Surface, SurfaceType } from './surface';
 
 export interface Shiny extends Surface {

@@ -1,12 +1,12 @@
 import { background, Color, defaultColor, grey, mul, scale, sum, toDrawingColor } from '../math/color';
 import { dot, mag, minus, norm, plus, times, Vector } from '../math/vector';
-import { getBodyHandler } from './bodies/handlers';
+import { getBodyHandler } from './bodies/handler-map';
 import { cameraRay } from './camera';
 import { detectIntersection, Intersection } from './intersection';
 import { Light } from './light';
 import { Ray } from './ray';
 import { Scene } from './scene';
-import { getSurfaceHandler } from './surfaces/handlers';
+import { getSurfaceHandler } from './surfaces/handler-map';
 import { Surface } from './surfaces/surface';
 
 export class RayTracer {
