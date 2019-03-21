@@ -1,9 +1,9 @@
 import { Chunk } from '../animation/chunk';
 import { Camera } from '../tracer/camera';
-import { Point } from '../tracer/point';
 import { RayTracer } from '../tracer/ray-tracer';
 import { Scene } from '../tracer/scene';
 import { ImageDataFiller } from './image-data-filler';
+import { Job, JobResult, JobType } from './job';
 import { Rect } from './worker-controller';
 
 export interface WorkerContext {
@@ -17,50 +17,69 @@ export interface WorkerContext {
 
 export class WorkerExecutor {
     private tracer = new RayTracer();
+    private context: WorkerContext;
 
     public attachTo(context: WorkerContext) {
-        context.addEventListener('message', ({ data }) => {
-            if (this.isSceneSetting(data)) {
-                this.tracer.scene = data.scene;
-                context.postMessage(null);
-            } else if (this.isCameraSetting(data)) {
-                this.tracer.scene.camera = data.camera;
-                context.postMessage(null);
-            } else if (this.isRectTrace(data)) {
-                const position: Point = {
-                    x: data.rect.x,
-                    y: data.rect.y,
-                };
-                const image = new ImageData(
-                    new Uint8ClampedArray(4 * data.rect.w * data.rect.h),
-                    data.rect.w,
-                    data.rect.h,
-                );
-                const filler = new ImageDataFiller(image);
+        this.context = context;
+        this.context.addEventListener('message', ({ data }) => this.handleJob(data));
+    }
 
-                for (let y = position.y; y < position.y + image.height; y++) {
-                    for (let x = position.x; x < position.x + image.width; x++) {
-                        filler.append(this.tracer.tracePoint(x, y));
-                    }
-                }
+    private handleJob(job: Job) {
+        if (this.isSceneSetting(job)) {
+            this.tracer.scene = job.payload.scene;
+            this.postResult(job);
+        } else if (this.isCameraSetting(job)) {
+            this.tracer.scene.camera = job.payload.camera;
+            this.postResult(job);
+        } else if (this.isRectTrace(job)) {
+            this.traceRect(job);
+        }
+    }
 
-                context.postMessage<Chunk>({
-                    position,
-                    image,
-                }, [image.data.buffer]);
+    private isRectTrace(job: Job): job is Job<{ rect: Rect }> {
+        return job.type === JobType.TraceRect && 'rect' in job.payload;
+    }
+
+    private traceRect(job: Job<{ rect: Rect }>) {
+        const rect = job.payload.rect;
+        const image = new ImageData(
+            new Uint8ClampedArray(4 * rect.w * rect.h),
+            rect.w,
+            rect.h,
+        );
+        const filler = new ImageDataFiller(image);
+
+        for (let y = rect.y; y < rect.y + image.height; y++) {
+            for (let x = rect.x; x < rect.x + image.width; x++) {
+                filler.append(this.tracer.tracePoint(x, y));
             }
-        });
+        }
+
+        this.postResult<Chunk>(job, {
+            image,
+            position: {
+                x: rect.x,
+                y: rect.y,
+            },
+        }, [image.data.buffer]);
     }
 
-    private isRectTrace(data: unknown): data is { rect: Rect } {
-        return typeof data === 'object' && data.hasOwnProperty('rect');
+    private isSceneSetting(job: Job): job is Job<{ scene: Scene }> {
+        return job.type === JobType.SetScene && 'scene' in job.payload;
     }
 
-    private isSceneSetting(data: unknown): data is { scene: Scene } {
-        return typeof data === 'object' && data.hasOwnProperty('scene');
+    private isCameraSetting(job: Job): job is Job<{ camera: Camera }> {
+        return job.type === JobType.SetCamera && 'camera' in job.payload;
     }
 
-    private isCameraSetting(data: unknown): data is { camera: Camera } {
-        return typeof data === 'object' && data.hasOwnProperty('camera');
+    private postResult<T = any>(job: Job, payload: T = null, transfer?: Transferable[]): void {
+        this.context.postMessage<JobResult<T>>(this.makeResult(job, payload), transfer);
+    }
+
+    private makeResult<T = any>(job: Job, payload: T = null): JobResult<T> {
+        return {
+            id: job.id,
+            payload,
+        };
     }
 }
