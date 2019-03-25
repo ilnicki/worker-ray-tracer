@@ -1,3 +1,4 @@
+import { Vector } from 'math/vector';
 import { black, white } from '../../math/color';
 import { always } from '../../util/functional';
 import { SurfaceHandler } from './handler';
@@ -5,15 +6,19 @@ import { Surface, SurfaceType } from './surface';
 
 export interface Checkerboard extends Surface {
     type: SurfaceType.Checkerboard;
+    size: number;
 }
 
-export const checkerboard = (): Checkerboard => ({
+export const checkerboard = (size = 1): Checkerboard => ({
     type: SurfaceType.Checkerboard,
+    size,
 });
 
+const isBright = (pos: Vector, size: number) => (Math.floor(pos.z * size) + Math.floor(pos.x * size)) % 2 * size !== 0;
+
 export const checkerboardHandler: SurfaceHandler<Checkerboard> = {
-    diffuse: (_surface, pos) => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? white : black,
+    diffuse: (surface, pos) => isBright(pos, 1 / surface.size) ? white : black,
     specular: always(white),
-    reflect: (_surface, pos) => ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) ? 0.15 : 0.5,
+    reflect: (surface, pos) => isBright(pos, 1 / surface.size) ? 0.15 : 0.5,
     roughness: always(150),
 };
