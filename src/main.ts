@@ -1,4 +1,4 @@
-import { FrameQueue } from './animation/frame-queue';
+import { FrameBuffer } from './animation/frame-buffer';
 import { fromHex } from './math/color';
 import { vector } from './math/vector';
 import { plane } from './tracer/bodies/plane';
@@ -40,26 +40,30 @@ document.body.onload = async () => {
     if (canvas.getContext) {
         const ctx = canvas.getContext('2d');
         const manager = new WorkerManager(4);
-        const queue = new FrameQueue();
 
+        const queue = new FrameBuffer();
         const trydraw = () => window.requestAnimationFrame(() => {
-            queue.dequeue().chunks.forEach(({ position: { x, y }, image }) => {
+            queue.next().chunks.forEach(({ position: { x, y }, image }) => {
                 ctx.putImageData(image, x, y);
             });
             trydraw();
         });
 
-        setTimeout(trydraw);
+        await manager.setScene(defaultScene());
 
-        const scene = defaultScene();
-        await manager.setScene(scene);
+        const step = 0.4;
+        const frameCount = Math.floor((Math.PI * 2) / step);
 
-        for (let angle = 0, frameId = 0; angle < 3 && frameId < 1; angle += 0.01, frameId++) {
+        const progress = document.getElementById('rendering') as HTMLProgressElement;
+        progress.max = frameCount - 1;
+
+        for (let angle = 0, frameId = 0; frameId < frameCount; angle += step, frameId++) {
             await manager.setCamera(defaultCamera(canvas.width, canvas.height, angle));
-
-            await manager.trace(frameId).then(frame => queue.enqueue(frame));
+            await manager.trace(frameId).then(frame => queue.add(frame));
+            progress.value = frameId;
         }
 
+        setTimeout(trydraw);
     } else {
         throw new Error('Application can not be drawn.');
     }
