@@ -14,6 +14,6 @@ export const matt = (): Matt => ({
 export const mattHandler: SurfaceHandler<Matt> = {
     diffuse: always(white),
     specular: always(black),
-    reflect: always(0.01),
+    reflect: always(0),
     roughness: always(900),
 };

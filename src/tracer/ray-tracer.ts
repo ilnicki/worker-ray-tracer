@@ -34,7 +34,7 @@ export class RayTracer {
         const pos = plus(times(dir, isect.dist), isect.ray.start);
         const bodyHandler = getBodyHandler(isect.body);
         const normal = bodyHandler.normal(pos, isect.body);
-        const reflectDir = norm(minus(dir, times(times(normal, dot(normal, dir)), 2)));
+        const reflectDir = norm(minus(dir, times(normal, dot(normal, dir) * 2)));
 
         const naturalColor = sum(
             background,
