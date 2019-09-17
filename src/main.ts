@@ -51,13 +51,13 @@ document.body.onload = async () => {
 
         await manager.setScene(defaultScene());
 
-        const step = 0.4;
+        const step = 0.1;
         const frameCount = Math.floor((Math.PI * 2) / step);
 
         const progress = document.getElementById('rendering') as HTMLProgressElement;
         progress.max = frameCount - 1;
 
-        for (let angle = 0, frameId = 0; frameId < frameCount; angle += step, frameId++) {
+        for (let angle = 0, frameId = 0; angle < Math.PI * 2; angle += step, frameId++) {
             await manager.setCamera(defaultCamera(canvas.width, canvas.height, angle));
             await manager.trace(frameId).then(frame => queue.add(frame));
             progress.value = frameId;
