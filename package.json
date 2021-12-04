@@ -5,12 +5,13 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "watch": "npm run dev -- --watch",
-    "serve": "webpack-dev-server --env.NODE_ENV=development --progress --watch",
-    "dev": "webpack --env.NODE_ENV=development --progress",
-    "prod": "webpack --env.NODE_ENV=production --no-progress",
+    "build:watch": "npm run build:dev -- --watch",
+    "serve": "webpack-dev-server --env.NODE_ENV=development --progress",
+    "serve:watch": "npm run build:dev -- --watch",
+    "build:dev": "webpack --env.NODE_ENV=development --progress",
+    "build:prod": "webpack --env.NODE_ENV=production --no-progress",
     "lint": "tslint --project tsconfig.json --config tslint.json --format stylish --force",
-    "fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix"
   },
   "author": "Dmytro Ilnicki",
   "license": "MIT",
