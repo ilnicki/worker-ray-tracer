@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "noImplicitAny": true,
+    "baseUrl": "src",
     "module": "es6",
     "target": "es6",
+    "incremental": true,
     "allowJs": true,
-    "baseUrl": "src",
+    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
     "lib": [
       "es7",
       "dom",

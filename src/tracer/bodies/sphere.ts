@@ -19,7 +19,7 @@ export const sphere = (center: Vector, radius: number, surface: Surface): Sphere
 });
 
 export const sphereHandler: BodyHandler<Sphere> = {
-    intersect(ray: Ray, sphereBody: Sphere): number {
+    intersect(ray: Ray, sphereBody: Sphere): number | null {
         const eo = minus(sphereBody.center, ray.start);
         const v = dot(eo, ray.dir);
         let dist = 0;

@@ -8,7 +8,7 @@ export interface Intersection<T extends Body = Body> {
     dist: number;
 }
 
-export const detectIntersection = (ray: Ray, bodies: Body[]): Intersection => {
+export const detectIntersection = (ray: Ray, bodies: Body[]): Intersection | null => {
     let body = null;
     let dist = Infinity;
 

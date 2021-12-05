@@ -11,13 +11,13 @@ export class WorkerManager {
         this.pool = Array(count).fill(null).map(() => new WorkerController());
     }
 
-    public setScene(scene: Scene): Promise<void> {
-        return Promise.all(this.pool.map(wc => wc.setScene(scene))).then(() => null);
+    public async setScene(scene: Scene): Promise<void> {
+        await Promise.all(this.pool.map(wc => wc.setScene(scene)));
     }
 
-    public setCamera(camera: Camera): Promise<void> {
+    public async setCamera(camera: Camera): Promise<void> {
         this.camera = camera;
-        return Promise.all(this.pool.map(wc => wc.setCamera(camera))).then(() => null);
+        await Promise.all(this.pool.map(wc => wc.setCamera(camera)));
     }
 
     public trace(id: number): Promise<Frame> {

@@ -15,11 +15,11 @@ export class RayTracer {
 
     public tracePoint(x: number, y: number): Color {
         return toDrawingColor(
-            this.traceRay(cameraRay(this.scene.camera, x, y), 0)
+            this.traceRay(cameraRay(this.scene.camera!, x, y), 0)
         );
     }
 
-    private testRay(ray: Ray): number {
+    private testRay(ray: Ray): number | null {
         const isect = detectIntersection(ray, this.scene.bodies);
         return isect ? isect.dist : null;
     }

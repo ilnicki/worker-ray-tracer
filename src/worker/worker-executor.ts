@@ -27,10 +27,10 @@ export class WorkerExecutor {
     private handleJob(job: Job) {
         if (this.isSceneSetting(job)) {
             this.tracer.scene = job.payload.scene;
-            this.postResult(job);
+            this.postResult(job, null);
         } else if (this.isCameraSetting(job)) {
             this.tracer.scene.camera = job.payload.camera;
-            this.postResult(job);
+            this.postResult(job, null);
         } else if (this.isRectTrace(job)) {
             this.traceRect(job);
         }
@@ -72,11 +72,11 @@ export class WorkerExecutor {
         return job.type === JobType.SetCamera && 'camera' in job.payload;
     }
 
-    private postResult<T = any>(job: Job, payload: T = null, transfer?: Transferable[]): void {
+    private postResult<T = any>(job: Job, payload: T, transfer?: Transferable[]): void {
         this.context.postMessage<JobResult<T>>(this.makeResult(job, payload), transfer);
     }
 
-    private makeResult<T = any>(job: Job, payload: T = null): JobResult<T> {
+    private makeResult<T = any>(job: Job, payload: T): JobResult<T> {
         return {
             id: job.id,
             payload,

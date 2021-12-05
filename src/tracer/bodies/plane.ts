@@ -19,7 +19,7 @@ export const plane = (normal: Vector, offset: number, surface: Surface): Plane =
 });
 
 export const planeHandler: BodyHandler<Plane> = {
-    intersect(ray: Ray, planeBody: Plane): number {
+    intersect(ray: Ray, planeBody: Plane): number | null {
         const denom = dot(planeBody.normal, ray.dir);
         return denom > 0 ? null : (dot(planeBody.normal, ray.start) + planeBody.offset) / -denom;
     },

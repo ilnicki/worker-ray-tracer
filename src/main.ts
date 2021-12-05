@@ -37,31 +37,25 @@ const defaultCamera = (width: number, height: number, angle: number): Camera =>
 
 document.body.onload = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    canvas.width = 930;
+    canvas.height = 930;
+
     if (canvas.getContext) {
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d')!;
         const manager = new WorkerManager(4);
 
-        const queue = new FrameBuffer();
+        const frames = new FrameBuffer();
         const trydraw = () => window.requestAnimationFrame(() => {
-            queue.next().chunks.forEach(({ position: { x, y }, image }) => {
+            frames.next().chunks.forEach(({ position: { x, y }, image }) => {
                 ctx.putImageData(image, x, y);
             });
             trydraw();
         });
 
         await manager.setScene(defaultScene());
+        await manager.setCamera(defaultCamera(canvas.width, canvas.height, 0));
 
-        const step = 0.1;
-        const frameCount = Math.floor((Math.PI * 2) / step);
-
-        const progress = document.getElementById('rendering') as HTMLProgressElement;
-        progress.max = frameCount - 1;
-
-        for (let angle = 0, frameId = 0; angle < Math.PI * 2; angle += step, frameId++) {
-            await manager.setCamera(defaultCamera(canvas.width, canvas.height, angle));
-            await manager.trace(frameId).then(frame => queue.add(frame));
-            progress.value = frameId;
-        }
+        manager.trace(0).then(frame => frames.add(frame));
 
         setTimeout(trydraw);
     } else {

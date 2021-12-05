@@ -47,7 +47,7 @@ export class WorkerController {
     }
 
     private handleJobResult(result: JobResult) {
-        this.jobs.get(result.id)(result.payload);
+        this.jobs.get(result.id)!(result.payload);
         this.jobs.delete(result.id);
     }
 }
