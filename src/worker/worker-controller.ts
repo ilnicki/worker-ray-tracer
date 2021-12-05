@@ -1,5 +1,4 @@
 import { Chunk } from '../animation/chunk';
-import { Camera } from '../tracer/camera';
 import { Scene } from '../tracer/scene';
 import { JobResult, JobType } from './job';
 
@@ -22,10 +21,6 @@ export class WorkerController {
 
     public setScene(scene: Scene): Promise<void> {
         return this.postJob(JobType.SetScene, { scene });
-    }
-
-    public setCamera(camera: Camera): Promise<void> {
-        return this.postJob(JobType.SetCamera, { camera });
     }
 
     public traceRect(rect: Rect): Promise<Chunk> {

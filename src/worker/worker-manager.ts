@@ -15,11 +15,6 @@ export class WorkerManager {
         await Promise.all(this.pool.map(wc => wc.setScene(scene)));
     }
 
-    public async setCamera(camera: Camera): Promise<void> {
-        this.camera = camera;
-        await Promise.all(this.pool.map(wc => wc.setCamera(camera)));
-    }
-
     public trace(id: number): Promise<Frame> {
         return Promise.all(this.pool.map((wc, workerId, { length }) =>
             wc.traceRect({

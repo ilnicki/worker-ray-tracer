@@ -1,6 +1,5 @@
 export enum JobType {
     SetScene,
-    SetCamera,
     TraceRect,
 }
 

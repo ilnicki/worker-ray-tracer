@@ -10,6 +10,9 @@ import { matt } from './tracer/surfaces/matt';
 import { shiny } from './tracer/surfaces/shiny';
 import { WorkerManager } from './worker/worker-manager';
 
+const WIDTH = 930;
+const HEIGHT = 930;
+
 const defaultScene = (): Scene => ({
     bodies: [
         plane(vector(0.0, 1.0, 0.0), 0.0, checkerboard()),
@@ -23,6 +26,7 @@ const defaultScene = (): Scene => ({
         { pos: vector(1.5, 2.5, -1.5), color: fromHex('127d12') },
         { pos: vector(0.0, 3.5, 0.0), color: fromHex('363659') },
     ],
+    camera: defaultCamera(WIDTH, HEIGHT, 0),
 });
 
 const position = vector(4.0, 3.0, 5.0);
@@ -53,7 +57,6 @@ document.body.onload = async () => {
         });
 
         await manager.setScene(defaultScene());
-        await manager.setCamera(defaultCamera(canvas.width, canvas.height, 0));
 
         manager.trace(0).then(frame => frames.add(frame));
 

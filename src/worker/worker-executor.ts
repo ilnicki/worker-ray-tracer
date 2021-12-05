@@ -1,5 +1,4 @@
 import { Chunk } from '../animation/chunk';
-import { Camera } from '../tracer/camera';
 import { RayTracer } from '../tracer/ray-tracer';
 import { Scene } from '../tracer/scene';
 import { ImageDataFiller } from './image-data-filler';
@@ -27,9 +26,6 @@ export class WorkerExecutor {
     private handleJob(job: Job) {
         if (this.isSceneSetting(job)) {
             this.tracer.scene = job.payload.scene;
-            this.postResult(job, null);
-        } else if (this.isCameraSetting(job)) {
-            this.tracer.scene.camera = job.payload.camera;
             this.postResult(job, null);
         } else if (this.isRectTrace(job)) {
             this.traceRect(job);
@@ -66,10 +62,6 @@ export class WorkerExecutor {
 
     private isSceneSetting(job: Job): job is Job<{ scene: Scene }> {
         return job.type === JobType.SetScene && 'scene' in job.payload;
-    }
-
-    private isCameraSetting(job: Job): job is Job<{ camera: Camera }> {
-        return job.type === JobType.SetCamera && 'camera' in job.payload;
     }
 
     private postResult<T = any>(job: Job, payload: T, transfer?: Transferable[]): void {

@@ -5,5 +5,5 @@ import { Light } from './light';
 export interface Scene {
     bodies: Body[];
     lights: Light[];
-    camera?: Camera;
+    camera: Camera;
 }
