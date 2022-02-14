@@ -14,8 +14,8 @@ const down: Vector = vector(0.0, -1.0, 0.0);
 
 export const camera = (pos: Vector, lookAt: Vector, width: number, height: number): Camera => {
     const forward = norm(minus(lookAt, pos));
-    const right = times(norm(cross(forward, down)), 1.5);
-    const up = times(norm(cross(forward, right)), 1.5);
+    const right = times(norm(cross(forward, down)), 2);
+    const up = times(norm(cross(forward, right)), 2);
 
     return {
         pos,

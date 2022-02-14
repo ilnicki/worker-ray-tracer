@@ -1,4 +1,4 @@
-import { Frame } from '../animation/frame';
+import { Frame } from '../render/frame';
 import { Camera } from '../tracer/camera';
 import { Scene } from '../tracer/scene';
 import { WorkerController } from './worker-controller';
@@ -12,10 +12,11 @@ export class WorkerManager {
     }
 
     public async setScene(scene: Scene): Promise<void> {
+        this.camera = scene.camera;
         await Promise.all(this.pool.map(wc => wc.setScene(scene)));
     }
 
-    public trace(id: number): Promise<Frame> {
+    public trace(): Promise<Frame> {
         return Promise.all(this.pool.map((wc, workerId, { length }) =>
             wc.traceRect({
                 x: 0,
@@ -24,7 +25,6 @@ export class WorkerManager {
                 h: Math.ceil(this.camera.height / length),
             })
         )).then(chunks => ({
-            id,
             chunks,
         }));
     }

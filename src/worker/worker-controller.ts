@@ -1,4 +1,4 @@
-import { Chunk } from '../animation/chunk';
+import { Chunk } from '../render/chunk';
 import { Scene } from '../tracer/scene';
 import { JobResult, JobType } from './job';
 

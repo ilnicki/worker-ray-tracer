@@ -1,4 +1,4 @@
-import { Chunk } from '../animation/chunk';
+import { Chunk } from '../render/chunk';
 import { RayTracer } from '../tracer/ray-tracer';
 import { Scene } from '../tracer/scene';
 import { ImageDataFiller } from './image-data-filler';

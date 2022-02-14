@@ -35,10 +35,12 @@ export const mul = (c1: Color, c2: Color): Color => color(
 );
 
 export const toDrawingColor = (c: Color): Color => color(
-    Math.floor(Math.min(1, c.r) * 255),
-    Math.floor(Math.min(1, c.g) * 255),
-    Math.floor(Math.min(1, c.b) * 255),
+    normalizeComponent(c.r),
+    normalizeComponent(c.g),
+    normalizeComponent(c.b),
 );
+
+const normalizeComponent = (component: number): number => Math.floor(Math.min(1, component) * 255);
 
 export const toString = (c: Color): string => `rgb(${c.r}, ${c.g}, ${c.b}`;
 

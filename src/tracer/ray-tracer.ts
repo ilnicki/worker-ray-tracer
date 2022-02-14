@@ -3,7 +3,7 @@ import { dot, mag, minus, norm, plus, times, Vector } from '../math/vector';
 import { getBodyHandler } from './bodies/handler-map';
 import { cameraRay } from './camera';
 import { detectIntersection, Intersection } from './intersection';
-import { Light } from './light';
+import { LightSource } from './light-source';
 import { Ray } from './ray';
 import { Scene } from './scene';
 import { getSurfaceHandler } from './surfaces/handler-map';
@@ -56,7 +56,7 @@ export class RayTracer {
     private getNaturalColor(surface: Surface, pos: Vector, normal: Vector, reflectDir: Vector) {
         const surfaceHandler = getSurfaceHandler(surface);
 
-        return this.scene.lights.reduce((color: Color, light: Light) => {
+        return this.scene.lights.reduce((color: Color, light: LightSource) => {
             const lightDistance = minus(light.pos, pos);
             const lightDirection = norm(lightDistance);
 
