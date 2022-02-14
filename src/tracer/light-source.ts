@@ -8,5 +8,5 @@ export interface LightSource {
 
 export const light = (pos: Vector, color: Color): LightSource => ({
     pos,
-    color
-})
+    color,
+});

@@ -1,15 +1,15 @@
-import { Frame } from './render/frame';
 import { fromHex } from './math/color';
 import { vector } from './math/vector';
+import { Frame } from './render/frame';
 import { plane } from './tracer/bodies/plane';
 import { sphere } from './tracer/bodies/sphere';
 import { camera } from './tracer/camera';
+import { light } from './tracer/light-source';
 import { Scene } from './tracer/scene';
 import { checkerboard } from './tracer/surfaces/checkerboard';
 import { matt } from './tracer/surfaces/matt';
 import { shiny } from './tracer/surfaces/shiny';
 import { WorkerManager } from './worker/worker-manager';
-import { light } from './tracer/light-source';
 
 const WIDTH = 512;
 const HEIGHT = 512;
